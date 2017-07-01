@@ -1,0 +1,4 @@
+Settings:
+  Debug: false
+  BlacklistedWorlds:
+    - WorldName

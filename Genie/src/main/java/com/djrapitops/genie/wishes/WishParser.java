@@ -1,11 +1,7 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.djrapitops.genie.wishes;
 
 import com.djrapitops.genie.file.WishLog;
+import com.djrapitops.genie.wishes.mob.FarmWish;
 import com.djrapitops.genie.wishes.mob.SpawnMobWish;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -52,6 +48,7 @@ public class WishParser {
                 wishes.add(new SpawnMobWish(entity));
             }
         }
+        wishes.add(new FarmWish());
     }
 
     /**

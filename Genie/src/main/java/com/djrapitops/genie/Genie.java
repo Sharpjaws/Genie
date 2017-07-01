@@ -1,5 +1,6 @@
 package com.djrapitops.genie;
 
+import com.djrapitops.genie.command.GenieCommand;
 import com.djrapitops.genie.file.LampStorage;
 import com.djrapitops.genie.file.WishLog;
 import com.djrapitops.genie.lamp.LampManager;
@@ -22,6 +23,7 @@ public class Genie extends RslPlugin<Genie> {
 
     @Override
     public void onEnable() {
+        super.setInstance(this);
         super.setLogPrefix("[Genie]");
         super.setColorScheme(new ColorScheme(ChatColor.AQUA, ChatColor.GRAY, ChatColor.DARK_AQUA));
         super.setDebugMode("console");
@@ -29,13 +31,15 @@ public class Genie extends RslPlugin<Genie> {
         wishLog = new WishLog(this);
         try {
             LampStorage lampStorage = new LampStorage(this);
-            lampManager = new LampManager(lampStorage);
+            lampManager = new LampManager(this, lampStorage);
         } catch (IOException | InvalidConfigurationException ex) {
             Log.toLog(this.getClass().getName(), ex);
             Log.error("Could not create 'lamps' storage file");
             Bukkit.getPluginManager().disablePlugin(this);
             return;
         }
+        registerListener(new ChatListener(this));
+        registerCommand(new GenieCommand(this));
         Log.info("Plugin Enabled.");
     }
 
@@ -52,5 +56,9 @@ public class Genie extends RslPlugin<Genie> {
 
     public WishLog getWishLog() {
         return wishLog;
+    }
+
+    public LampManager getLampManager() {
+        return lampManager;
     }
 }
