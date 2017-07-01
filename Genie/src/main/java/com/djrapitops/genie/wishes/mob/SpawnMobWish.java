@@ -21,7 +21,7 @@ public class SpawnMobWish extends Wish {
     public SpawnMobWish(EntityType mobToSpawn) {
         this.mobToSpawn = mobToSpawn;
     }
-    
+
     @Override
     public boolean fulfillWish(Player p) {
         Location aboveHead = p.getLocation().add(new Location(p.getWorld(), 0, 2, 0));
@@ -29,4 +29,8 @@ public class SpawnMobWish extends Wish {
         return true;
     }
 
+    @Override
+    public String getName() {
+        return this.getClass().getSimpleName() + "-" + mobToSpawn.name();
+    }
 }

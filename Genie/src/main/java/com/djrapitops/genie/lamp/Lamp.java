@@ -21,11 +21,11 @@ public class Lamp {
         this.lampID = lampID;
         this.wishes = wishes;
     }
-    
+
     public boolean hasWishesLeft() {
         return wishes > 0;
     }
-    
+
     public void useWish() {
         wishes--;
     }

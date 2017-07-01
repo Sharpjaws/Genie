@@ -2,3 +2,6 @@ Settings:
   Debug: false
   BlacklistedWorlds:
     - WorldName
+Customization:
+  Wishes:
+    DefaultWish: false

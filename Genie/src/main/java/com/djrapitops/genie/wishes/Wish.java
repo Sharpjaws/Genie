@@ -9,5 +9,6 @@ import org.bukkit.entity.Player;
  */
 public abstract class Wish {
 
-    public abstract boolean fulfillWish(Player p);
+    public abstract boolean fulfillWish(Player p);    
+    public abstract String getName();
 }

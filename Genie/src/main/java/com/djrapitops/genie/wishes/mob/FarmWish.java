@@ -44,4 +44,9 @@ public class FarmWish extends Wish {
             mobWishes.add(new SpawnMobWish(farmAnimal));
         }
     }
+
+    @Override
+    public String getName() {
+        return this.getClass().getSimpleName();
+    }
 }

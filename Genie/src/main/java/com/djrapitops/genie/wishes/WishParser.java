@@ -1,10 +1,14 @@
 package com.djrapitops.genie.wishes;
 
+import com.djrapitops.genie.Genie;
+import com.djrapitops.genie.Log;
+import com.djrapitops.genie.file.WishConfigSectionHandler;
 import com.djrapitops.genie.file.WishLog;
 import com.djrapitops.genie.wishes.mob.FarmWish;
 import com.djrapitops.genie.wishes.mob.SpawnMobWish;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -15,20 +19,41 @@ import org.bukkit.entity.Player;
  */
 public class WishParser {
 
+    private final Genie plugin;
     private final List<Wish> wishes;
     private final WishLog log;
+    private final WishConfigSectionHandler configSection;
 
     /**
      *
-     * @param log
+     * @param plugin
      */
-    public WishParser(WishLog log) {
-        this.log = log;
+    public WishParser(Genie plugin) {
+        this.plugin = plugin;
+        this.log = plugin.getWishLog();
+        this.configSection = plugin.getWishConfigSectionHandler();
         wishes = new ArrayList<>();
         addWishes();
     }
 
     private void addWishes() {
+        List<Wish> toAdd = new ArrayList<>();
+        List<EntityType> prevented = getPreventedEntities();
+        for (EntityType entity : EntityType.values()) {
+            if (!prevented.contains(entity)) {
+                toAdd.add(new SpawnMobWish(entity));
+            }
+        }
+        toAdd.add(new FarmWish());
+        Collections.sort(toAdd, new WishComparator());
+        for (Wish wish : toAdd) {
+            addWish(wish);
+        }
+        Log.info("Initialized with " + wishes.size() + " wishes");
+        plugin.processStatus().setStatus("Wishes", wishes.size() + "");
+    }
+
+    public List<EntityType> getPreventedEntities() {
         List<EntityType> prevented = Arrays.asList(new EntityType[]{
             EntityType.AREA_EFFECT_CLOUD, EntityType.ARMOR_STAND, EntityType.COMPLEX_PART,
             EntityType.DRAGON_FIREBALL, EntityType.DROPPED_ITEM, EntityType.EGG,
@@ -41,14 +66,18 @@ public class WishParser {
             EntityType.MINECART_MOB_SPAWNER, EntityType.MINECART_TNT, EntityType.PAINTING,
             EntityType.PLAYER, EntityType.PRIMED_TNT, EntityType.SHULKER_BULLET,
             EntityType.THROWN_EXP_BOTTLE, EntityType.TIPPED_ARROW, EntityType.UNKNOWN,
-            EntityType.WEATHER, EntityType.WITHER_SKULL
+            EntityType.WEATHER, EntityType.WITHER_SKULL, EntityType.ARROW, EntityType.BOAT
         });
-        for (EntityType entity : EntityType.values()) {
-            if (!prevented.contains(entity)) {
-                wishes.add(new SpawnMobWish(entity));
-            }
+        return prevented;
+    }
+
+    private void addWish(Wish wish) {
+        if (!configSection.exists(wish)) {
+            configSection.createSection(wish);
         }
-        wishes.add(new FarmWish());
+        if (configSection.isAllowed(wish)) {
+            wishes.add(wish);
+        }
     }
 
     /**

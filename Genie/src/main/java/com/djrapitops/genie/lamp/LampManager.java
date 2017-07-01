@@ -27,21 +27,21 @@ public class LampManager {
         UUID uuid = UUID.randomUUID();
         if (lamps.containsKey(uuid)) {
             uuid = newLampID();
-        }        
+        }
         return uuid;
     }
-    
+
     public void dropNewLamp(Location loc) {
         loc.getWorld().dropItem(loc, plugin.getLampManager().newLamp());
     }
-    
+
     public LampItem newLamp() {
         UUID lampID = newLampID();
         Lamp lamp = new Lamp(lampID);
         addNewLamp(lamp);
         return new LampItem(lampID);
     }
-    
+
     public Lamp getLamp(UUID lampID) {
         return lamps.get(lampID);
     }
@@ -50,7 +50,7 @@ public class LampManager {
         lamps.put(lamp.getLampID(), lamp);
         store.addLamp(lamp);
     }
-    
+
     public void wish(Lamp lamp) {
         store.wishUsed(lamp);
     }

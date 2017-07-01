@@ -69,4 +69,12 @@ public class LampStorage extends ConfigFile {
         FileConfiguration config = getConfig();
         config.set("Lamps." + lamp.getLampID().toString() + ".wishese", lamp.getWishes());
     }
+
+    public void genieFreed(Lamp lamp) {
+        while (lamp.hasWishesLeft()) {
+            lamp.useWish();
+        }
+        lamp.useWish(); // TO -1
+        wishUsed(lamp);
+    }
 }

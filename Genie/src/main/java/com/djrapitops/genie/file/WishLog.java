@@ -31,11 +31,11 @@ public class WishLog {
         String timeStamp = "[" + FormattingUtils.formatTimeStampSecond(BenchmarkUtil.getTime()) + "] ";
         plugin.getPluginLogger().toLog("Wishlog.txt", timeStamp + p.getName() + wish);
     }
-    
+
     public List<String> getWishesBy(String playername) throws IOException {
         List<String> wishes = Files.lines(new File(plugin.getDataFolder(), "Wishlog.txt").toPath())
                 .filter(l -> l.toLowerCase().contains(playername.toLowerCase()))
                 .collect(Collectors.toList());
         return wishes;
-    } 
+    }
 }

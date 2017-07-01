@@ -1,6 +1,10 @@
-package com.djrapitops.genie;
+package com.djrapitops.genie.listeners;
 
+import com.djrapitops.genie.Genie;
+import com.djrapitops.genie.Log;
+import com.djrapitops.genie.Settings;
 import com.djrapitops.genie.lamp.LampItem;
+import com.djrapitops.javaplugin.api.ColorScheme;
 import com.djrapitops.javaplugin.api.TimeAmount;
 import com.djrapitops.javaplugin.utilities.BenchmarkUtil;
 import java.util.List;
@@ -41,8 +45,11 @@ public class ChatListener implements Listener {
         if (item == null || !LampItem.isLampItem(item)) {
             return;
         }
-        String message = event.getMessage();
-        makeAWish(player, message);
+        String message = event.getMessage().toLowerCase();
+        ColorScheme color = plugin.getColorScheme();
+        if (!makeAWish(player, message)) {
+            player.sendMessage(color.getMainColor() + "[Genie] " + color.getSecondColor() + "Sorry, I do not know how to fulfill your wish");
+        }
     }
 
     private ItemStack getItemInhand(Player player) {
@@ -64,8 +71,9 @@ public class ChatListener implements Listener {
         configRead = BenchmarkUtil.getTime();
     }
 
-    private void makeAWish(Player player, String message) {
-        Log.debug("Recieved a wish: "+player.getName()+" "+message);
+    private boolean makeAWish(Player player, String message) {
+        Log.debug("Recieved a wish: " + player.getName() + " " + message);
+        return plugin.getWishParser().wish(player, message);
     }
 
 }
