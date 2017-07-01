@@ -10,15 +10,18 @@ import java.util.UUID;
 public class Lamp {
 
     private final UUID owner;
+    private final UUID lampID;
     private int wishes;
 
-    public Lamp(UUID owner) {
+    public Lamp(UUID owner, UUID lampID) {
         this.owner = owner;
+        this.lampID = lampID;
         wishes = 3;
     }
 
-    public Lamp(UUID owner, int wishes) {
+    public Lamp(UUID owner, UUID lampID, int wishes) {
         this.owner = owner;
+        this.lampID = lampID;
         this.wishes = wishes;
     }
     
@@ -36,5 +39,9 @@ public class Lamp {
 
     public int getWishes() {
         return wishes;
+    }
+
+    public UUID getLampID() {
+        return lampID;
     }
 }
