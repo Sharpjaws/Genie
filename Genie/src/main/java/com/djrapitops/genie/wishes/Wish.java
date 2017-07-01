@@ -31,6 +31,7 @@ public abstract class Wish {
         for (String wishPart : wishParts) {
             removed = removed.replaceFirst(wishPart, "");
         }
+        removed = removed.replace(" ", "");
         int remaining = removed.length();
         double perc = remaining * 1.0 / tags.length();
         return perc;

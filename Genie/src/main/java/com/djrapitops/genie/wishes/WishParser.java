@@ -5,6 +5,7 @@ import com.djrapitops.genie.Log;
 import com.djrapitops.genie.file.WishConfigSectionHandler;
 import com.djrapitops.genie.file.WishLog;
 import com.djrapitops.genie.wishes.mob.FarmWish;
+import com.djrapitops.genie.wishes.mob.ItemWish;
 import com.djrapitops.genie.wishes.mob.SpawnMobRidingOnWish;
 import com.djrapitops.genie.wishes.mob.SpawnMobWish;
 import com.djrapitops.javaplugin.task.RslBukkitRunnable;
@@ -12,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
@@ -20,7 +22,7 @@ import org.bukkit.entity.Player;
  * @author Rsl1122
  */
 public class WishParser {
-    
+
     private final Genie plugin;
     private final List<Wish> wishes;
     private final WishLog log;
@@ -37,7 +39,7 @@ public class WishParser {
         wishes = new ArrayList<>();
         addWishes();
     }
-    
+
     private void addWishes() {
         List<Wish> toAdd = new ArrayList<>();
         List<EntityType> prevented = getPreventedEntities();
@@ -51,6 +53,12 @@ public class WishParser {
                 }
             }
         }
+        List<Material> preventedMats = getPreventedItems();
+        for (Material material : Material.values()) {
+            if (!preventedMats.contains(material)) {
+                toAdd.add(new ItemWish(material));
+            }
+        }
         toAdd.add(new FarmWish());
         Collections.sort(toAdd, new WishComparator());
         for (Wish wish : toAdd) {
@@ -59,7 +67,7 @@ public class WishParser {
         Log.info("Initialized with " + wishes.size() + " wishes");
         plugin.processStatus().setStatus("Wishes", wishes.size() + "");
     }
-    
+
     public List<EntityType> getPreventedEntities() {
         List<EntityType> prevented = Arrays.asList(new EntityType[]{
             EntityType.AREA_EFFECT_CLOUD, EntityType.ARMOR_STAND, EntityType.COMPLEX_PART,
@@ -78,7 +86,32 @@ public class WishParser {
         });
         return prevented;
     }
-    
+
+    public List<Material> getPreventedItems() {
+        List<Material> prevented = Arrays.asList(new Material[]{
+            Material.ACACIA_DOOR, Material.BEDROCK, Material.AIR,
+            Material.BED_BLOCK, Material.BEETROOT_BLOCK, Material.BIRCH_DOOR,
+            Material.BREWING_STAND, Material.BURNING_FURNACE, Material.CAKE_BLOCK,
+            Material.CARROT, Material.COMMAND, Material.CAULDRON,
+            Material.COMMAND, Material.COMMAND_CHAIN, Material.COMMAND_REPEATING,
+            Material.COMMAND_MINECART, Material.DIODE_BLOCK_ON, Material.DARK_OAK_DOOR,
+            Material.DAYLIGHT_DETECTOR_INVERTED, Material.DIODE_BLOCK_ON, Material.DIODE_BLOCK_OFF,
+            Material.DOUBLE_PLANT, Material.DOUBLE_STONE_SLAB2, Material.EMPTY_MAP,
+            Material.ENDER_PORTAL, Material.ENDER_PORTAL_FRAME, Material.FIREWORK_CHARGE,
+            Material.FLOWER_POT, Material.HUGE_MUSHROOM_1, Material.HUGE_MUSHROOM_2,
+            Material.IRON_DOOR_BLOCK, Material.JUNGLE_DOOR, Material.KNOWLEDGE_BOOK,
+            Material.MONSTER_EGG, Material.MONSTER_EGGS, Material.PISTON_BASE,
+            Material.PISTON_EXTENSION, Material.PISTON_MOVING_PIECE, Material.PISTON_STICKY_BASE,
+            Material.REDSTONE_COMPARATOR_OFF, Material.REDSTONE_LAMP_ON, Material.REDSTONE_TORCH_OFF,
+            Material.SIGN_POST, Material.SKULL, Material.SKULL_ITEM,
+            Material.SNOW, Material.SPRUCE_DOOR, Material.SUGAR_CANE_BLOCK,
+            Material.STRUCTURE_BLOCK, Material.STRUCTURE_VOID, Material.STANDING_BANNER,
+            Material.STATIONARY_WATER, Material.STATIONARY_LAVA, Material.TIPPED_ARROW,
+            Material.TRIPWIRE, Material.WALL_SIGN, Material.WATER,
+            Material.LAVA, Material.WRITTEN_BOOK, Material.WALL_BANNER});
+        return prevented;
+    }
+
     private void addWish(Wish wish) {
         if (!configSection.exists(wish)) {
             configSection.createSection(wish);
@@ -112,12 +145,12 @@ public class WishParser {
         }
         return false;
     }
-    
+
     public Wish getMatchingWish(String wish) {
         List<Wish> matches = new ArrayList<>(wishes);
         //remove
         String parsedWish = removeCommonWords(wish);
-        Log.debug("Parsed wish: " + parsedWish);        
+        Log.debug("Parsed wish: " + parsedWish);
         Collections.sort(matches, new WishMatchComparator(parsedWish));
         Log.debug("Top 5:");
         int i = 0;
@@ -137,7 +170,7 @@ public class WishParser {
         }
         return match;
     }
-    
+
     private String removeCommonWords(String wish) {
         String[] commonWords = new String[]{
             "i", "you", "him", "her", "a", "the", "had", "wish", "get", "set",
