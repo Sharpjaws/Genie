@@ -23,7 +23,7 @@ public class WishConfigSectionHandler {
 
     public boolean exists(Wish wish) {
         ConfigurationSection section = getWishesSection();
-        String wishName = wish.getName();
+        String wishName = wish.getClass().getSimpleName().replace("Wish", "") + "-" + wish.getName();
         return section.contains(wishName);
     }
 
@@ -35,7 +35,7 @@ public class WishConfigSectionHandler {
 
     public void createSection(Wish wish) {
         ConfigurationSection section = getWishesSection();
-        String wishName = wish.getClass().getSimpleName().replace("Wisg", "") + "-" + wish.getName();
+        String wishName = wish.getClass().getSimpleName().replace("Wish", "") + "-" + wish.getName();
         section.addDefault(wishName, true);
         FileConfiguration config = plugin.getConfig();
         config.set("Customization.Wishes", section);
@@ -44,7 +44,7 @@ public class WishConfigSectionHandler {
 
     public boolean isAllowed(Wish wish) {
         ConfigurationSection section = getWishesSection();
-        String wishName = wish.getName();
+        String wishName = wish.getClass().getSimpleName().replace("Wish", "") + "-" + wish.getName();
         return section.getBoolean(wishName);
     }
 }

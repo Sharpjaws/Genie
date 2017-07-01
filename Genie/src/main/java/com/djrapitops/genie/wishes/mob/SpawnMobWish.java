@@ -24,9 +24,8 @@ public class SpawnMobWish extends Wish {
     }
 
     private static String getProperMobname(String mobName) {
-        String replacedWNone = mobName.replace("_", "");
         String replacedWSpace = mobName.replace("_", " ");
-        return replacedWNone + (replacedWNone.equals(replacedWSpace) ? "" : ", " + replacedWSpace);
+        return replacedWSpace;
     }
 
     @Override

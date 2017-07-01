@@ -20,7 +20,7 @@ import org.bukkit.entity.Player;
  * @author Rsl1122
  */
 public class WishParser {
-
+    
     private final Genie plugin;
     private final List<Wish> wishes;
     private final WishLog log;
@@ -37,7 +37,7 @@ public class WishParser {
         wishes = new ArrayList<>();
         addWishes();
     }
-
+    
     private void addWishes() {
         List<Wish> toAdd = new ArrayList<>();
         List<EntityType> prevented = getPreventedEntities();
@@ -46,7 +46,7 @@ public class WishParser {
                 toAdd.add(new SpawnMobWish(mob));
             }
             for (EntityType stackMob : EntityType.values()) {
-                if (!prevented.contains(mob)) {
+                if (!prevented.contains(mob) && !prevented.contains(stackMob)) {
                     toAdd.add(new SpawnMobRidingOnWish(mob, stackMob));
                 }
             }
@@ -59,7 +59,7 @@ public class WishParser {
         Log.info("Initialized with " + wishes.size() + " wishes");
         plugin.processStatus().setStatus("Wishes", wishes.size() + "");
     }
-
+    
     public List<EntityType> getPreventedEntities() {
         List<EntityType> prevented = Arrays.asList(new EntityType[]{
             EntityType.AREA_EFFECT_CLOUD, EntityType.ARMOR_STAND, EntityType.COMPLEX_PART,
@@ -73,12 +73,12 @@ public class WishParser {
             EntityType.MINECART_MOB_SPAWNER, EntityType.MINECART_TNT, EntityType.PAINTING,
             EntityType.PLAYER, EntityType.PRIMED_TNT, EntityType.SHULKER_BULLET,
             EntityType.THROWN_EXP_BOTTLE, EntityType.TIPPED_ARROW, EntityType.UNKNOWN,
-            EntityType.WEATHER, EntityType.WITHER_SKULL, EntityType.ARROW, EntityType.BOAT, 
+            EntityType.WEATHER, EntityType.WITHER_SKULL, EntityType.ARROW, EntityType.BOAT,
             EntityType.SPLASH_POTION, EntityType.SMALL_FIREBALL
         });
         return prevented;
     }
-
+    
     private void addWish(Wish wish) {
         if (!configSection.exists(wish)) {
             configSection.createSection(wish);
@@ -112,17 +112,23 @@ public class WishParser {
         }
         return false;
     }
-
+    
     public Wish getMatchingWish(String wish) {
         List<Wish> matches = new ArrayList<>(wishes);
         //remove
-        Log.debug("Wish: " + wish);
         String parsedWish = removeCommonWords(wish);
-        Log.debug("Parsed wish: " + parsedWish);
-        for (Wish match : matches) {
-            Log.debug(match.getAliases() + ": " + match.getMatchPercentage(parsedWish));
-        }
+        Log.debug("Parsed wish: " + parsedWish);        
         Collections.sort(matches, new WishMatchComparator(parsedWish));
+        Log.debug("Top 5:");
+        int i = 0;
+        for (Wish match : matches) {
+            if (i > 4) {
+                break;
+            }
+            Log.debug(match.getAliases() + ": " + match.getMatchPercentage(parsedWish));
+            i++;
+        }
+        //
         Wish match = matches.get(0);
         double percentage = match.getMatchPercentage(parsedWish); // Lower is better
         Log.debug("Wish: " + wish + " | Match: " + match.getAliases() + " | Remain: " + percentage);
@@ -131,7 +137,7 @@ public class WishParser {
         }
         return match;
     }
-
+    
     private String removeCommonWords(String wish) {
         String[] commonWords = new String[]{
             "i", "you", "him", "her", "a", "the", "had", "wish", "get", "set",

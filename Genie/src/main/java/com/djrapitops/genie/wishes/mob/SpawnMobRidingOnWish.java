@@ -22,15 +22,14 @@ public class SpawnMobRidingOnWish extends Wish {
     private final EntityType mobToStack;
 
     public SpawnMobRidingOnWish(EntityType mobToSpawn, EntityType mobToStack) {
-        super(getProperMobname(mobToSpawn.name()) + ", on, " + getProperMobname(mobToStack.name()));
+        super(getProperMobname(mobToStack.name()) + ", on, " + getProperMobname(mobToSpawn.name()));
         this.mobToSpawn = mobToSpawn;
         this.mobToStack = mobToStack;
     }
 
     private static String getProperMobname(String mobName) {
-        String replacedWNone = mobName.replace("_", "");
         String replacedWSpace = mobName.replace("_", " ");
-        return replacedWNone + (replacedWNone.equals(replacedWSpace) ? "" : ", " + replacedWSpace);
+        return replacedWSpace;
     }
 
     @Override

@@ -1,6 +1,5 @@
 package com.djrapitops.genie.wishes;
 
-import com.djrapitops.genie.Log;
 import org.bukkit.entity.Player;
 
 /**
@@ -28,11 +27,12 @@ public abstract class Wish {
 
     public double getMatchPercentage(String wish) {
         String[] wishParts = wish.split(" ");
-        String removed = tags.toLowerCase();
+        String removed = tags.toLowerCase().replace(", ", "");
         for (String wishPart : wishParts) {
-            removed = removed.replace(wishPart, "");
+            removed = removed.replaceFirst(wishPart, "");
         }
-        double perc = removed.length() * 1.0 / tags.length();        
+        int remaining = removed.length();
+        double perc = remaining * 1.0 / tags.length();
         return perc;
     }
 }
