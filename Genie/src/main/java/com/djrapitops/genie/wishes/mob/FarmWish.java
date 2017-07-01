@@ -20,6 +20,7 @@ public class FarmWish extends Wish {
     private final List<Wish> mobWishes;
 
     public FarmWish() {
+        super("Farm, Animals");
         mobWishes = new ArrayList<>();
         addWishes();
     }
@@ -43,10 +44,5 @@ public class FarmWish extends Wish {
         for (EntityType farmAnimal : e) {
             mobWishes.add(new SpawnMobWish(farmAnimal));
         }
-    }
-
-    @Override
-    public String getName() {
-        return this.getClass().getSimpleName();
     }
 }

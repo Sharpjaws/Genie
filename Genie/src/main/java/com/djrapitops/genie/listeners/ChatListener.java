@@ -33,6 +33,7 @@ public class ChatListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onChat(AsyncPlayerChatEvent event) {
+        Log.debug("ChatEvent registered");
         Player player = event.getPlayer();
         if (configRead < BenchmarkUtil.getTime() - TimeAmount.MINUTE.ms() * 10L) {
             updateBlacklist();
@@ -43,13 +44,17 @@ public class ChatListener implements Listener {
         }
         ItemStack item = getItemInhand(player);
         if (item == null || !LampItem.isLampItem(item)) {
+            Log.debug("Not holding lamp, ignored.");
             return;
         }
         String message = event.getMessage().toLowerCase();
         ColorScheme color = plugin.getColorScheme();
+        Log.debug("Holding lamp.");
+        
         if (!makeAWish(player, message)) {
             player.sendMessage(color.getMainColor() + "[Genie] " + color.getSecondColor() + "Sorry, I do not know how to fulfill your wish");
         }
+        
     }
 
     private ItemStack getItemInhand(Player player) {

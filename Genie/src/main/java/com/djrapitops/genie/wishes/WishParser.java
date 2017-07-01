@@ -5,7 +5,9 @@ import com.djrapitops.genie.Log;
 import com.djrapitops.genie.file.WishConfigSectionHandler;
 import com.djrapitops.genie.file.WishLog;
 import com.djrapitops.genie.wishes.mob.FarmWish;
+import com.djrapitops.genie.wishes.mob.SpawnMobRidingOnWish;
 import com.djrapitops.genie.wishes.mob.SpawnMobWish;
+import com.djrapitops.javaplugin.task.RslBukkitRunnable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -39,9 +41,14 @@ public class WishParser {
     private void addWishes() {
         List<Wish> toAdd = new ArrayList<>();
         List<EntityType> prevented = getPreventedEntities();
-        for (EntityType entity : EntityType.values()) {
-            if (!prevented.contains(entity)) {
-                toAdd.add(new SpawnMobWish(entity));
+        for (EntityType mob : EntityType.values()) {
+            if (!prevented.contains(mob)) {
+                toAdd.add(new SpawnMobWish(mob));
+            }
+            for (EntityType stackMob : EntityType.values()) {
+                if (!prevented.contains(mob)) {
+                    toAdd.add(new SpawnMobRidingOnWish(mob, stackMob));
+                }
             }
         }
         toAdd.add(new FarmWish());
@@ -66,7 +73,8 @@ public class WishParser {
             EntityType.MINECART_MOB_SPAWNER, EntityType.MINECART_TNT, EntityType.PAINTING,
             EntityType.PLAYER, EntityType.PRIMED_TNT, EntityType.SHULKER_BULLET,
             EntityType.THROWN_EXP_BOTTLE, EntityType.TIPPED_ARROW, EntityType.UNKNOWN,
-            EntityType.WEATHER, EntityType.WITHER_SKULL, EntityType.ARROW, EntityType.BOAT
+            EntityType.WEATHER, EntityType.WITHER_SKULL, EntityType.ARROW, EntityType.BOAT, 
+            EntityType.SPLASH_POTION, EntityType.SMALL_FIREBALL
         });
         return prevented;
     }
@@ -88,7 +96,60 @@ public class WishParser {
      */
     public boolean wish(Player p, String wish) {
         log.madeAWish(p, wish);
+        Wish match = getMatchingWish(wish);
+        if (match != null) {
+            new RslBukkitRunnable<Genie>("WishFulfillmentTask") {
+                @Override
+                public void run() {
+                    try {
+                        match.fulfillWish(p);
+                    } finally {
+                        this.cancel();
+                    }
+                }
+            }.runTask();
+            return true;
+        }
         return false;
     }
 
+    public Wish getMatchingWish(String wish) {
+        List<Wish> matches = new ArrayList<>(wishes);
+        //remove
+        Log.debug("Wish: " + wish);
+        String parsedWish = removeCommonWords(wish);
+        Log.debug("Parsed wish: " + parsedWish);
+        for (Wish match : matches) {
+            Log.debug(match.getAliases() + ": " + match.getMatchPercentage(parsedWish));
+        }
+        Collections.sort(matches, new WishMatchComparator(parsedWish));
+        Wish match = matches.get(0);
+        double percentage = match.getMatchPercentage(parsedWish); // Lower is better
+        Log.debug("Wish: " + wish + " | Match: " + match.getAliases() + " | Remain: " + percentage);
+        if (percentage > 0.6) {
+            return null;
+        }
+        return match;
+    }
+
+    private String removeCommonWords(String wish) {
+        String[] commonWords = new String[]{
+            "i", "you", "him", "her", "a", "the", "had", "wish", "get", "set",
+            "be", "of", "and", "in", "that", "have", "it", "for", "not", "as", "do",
+            "from", "an", "this", "but", "his", "by", "they", "we", "say", "her", "or",
+            "will", "my", "all", "would", "their", "there", "what", "so", "up", "out", "if",
+            "about", "who", "which", "go", "me", "when", "make", "can", "like", "time", "no",
+            "just", "him", "know", "take", "people", "into", "year", "your", "good", "some",
+            "could", "them", "see", "other", "than", "then", "now", "look", "only", "come",
+            "its", "over", "think", "also", "back", "after", "use", "our", "work", "first",
+            "well", "way", "even", "new", "want", "because", "any", "these", "give", "day",
+            "most", "us"};
+        String parsed = wish.replace("to", "teleportto");
+        parsed = parsed.replace("here", "teleporthere");
+        for (String word : commonWords) {
+            parsed = parsed.replace(" " + word + " ", " ");
+            parsed = parsed.replace("" + word + " ", " ");
+        }
+        return parsed;
+    }
 }

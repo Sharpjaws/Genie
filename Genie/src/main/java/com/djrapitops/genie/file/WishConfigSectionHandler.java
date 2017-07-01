@@ -29,13 +29,13 @@ public class WishConfigSectionHandler {
 
     private ConfigurationSection getWishesSection() {
         FileConfiguration config = plugin.getConfig();
-        ConfigurationSection section = config.getConfigurationSection("Customization.Wishes");        
+        ConfigurationSection section = config.getConfigurationSection("Customization.Wishes");
         return section;
     }
 
     public void createSection(Wish wish) {
         ConfigurationSection section = getWishesSection();
-        String wishName = wish.getName();
+        String wishName = wish.getClass().getSimpleName().replace("Wisg", "") + "-" + wish.getName();
         section.addDefault(wishName, true);
         FileConfiguration config = plugin.getConfig();
         config.set("Customization.Wishes", section);

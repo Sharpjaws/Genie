@@ -7,20 +7,24 @@ package com.djrapitops.genie.wishes.mob;
 
 import com.djrapitops.genie.wishes.Wish;
 import org.bukkit.Location;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
 /**
  *
  * @author Rsl1122
  */
-public class SpawnMobWish extends Wish {
+public class SpawnMobRidingOnWish extends Wish {
 
     private final EntityType mobToSpawn;
+    private final EntityType mobToStack;
 
-    public SpawnMobWish(EntityType mobToSpawn) {
-        super(getProperMobname(mobToSpawn.name()));
+    public SpawnMobRidingOnWish(EntityType mobToSpawn, EntityType mobToStack) {
+        super(getProperMobname(mobToSpawn.name()) + ", on, " + getProperMobname(mobToStack.name()));
         this.mobToSpawn = mobToSpawn;
+        this.mobToStack = mobToStack;
     }
 
     private static String getProperMobname(String mobName) {
@@ -32,7 +36,9 @@ public class SpawnMobWish extends Wish {
     @Override
     public boolean fulfillWish(Player p) {
         Location aboveHead = p.getLocation().add(new Location(p.getWorld(), 0, 2, 0));
-        p.getWorld().spawnEntity(aboveHead, mobToSpawn);
+        Entity spawned = p.getWorld().spawnEntity(aboveHead, mobToSpawn);
+        Entity toStack = p.getWorld().spawnEntity(aboveHead, mobToStack);
+        ((LivingEntity) spawned).addPassenger(toStack);
         return true;
     }
 }
