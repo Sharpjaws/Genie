@@ -22,24 +22,24 @@ import org.bukkit.entity.Player;
  * @author Rsl1122
  */
 public class GiveLampCommand extends SubCommand {
-    
+
     private final Genie plugin;
-    
+
     public GiveLampCommand(Genie plugin) {
         super("give, givelamp, lamp, g", CommandType.CONSOLE_WITH_ARGUMENTS, "genie.admin", "Gives the lamp to user or given player", "[player]");
         this.plugin = plugin;
     }
-    
+
     @Override
     public boolean onCommand(ISender sender, String commandLabel, String[] args) {
         Player reciever = null;
         if (args.length == 0 && CommandUtils.isPlayer(sender)) {
-            reciever = (Player) sender;
+            reciever = (Player) sender.getSender();
         } else {
             UUID uuid = null;
             try {
                 uuid = UUIDFetcher.getUUIDOf(args[0]);
-            } catch (Exception ex) {                
+            } catch (Exception ex) {
             }
             if (uuid == null) {
                 sender.sendMessage(ChatColor.RED + "Player not found. (Is the player online? Name is case sensitive!)");
@@ -47,9 +47,13 @@ public class GiveLampCommand extends SubCommand {
             }
             reciever = getPlayer(uuid);
         }
-        plugin.getLampManager().dropNewLamp(reciever.getLocation(), reciever.getUniqueId());
+        if (reciever == null) {
+            sender.sendMessage(ChatColor.RED + "Player not found. (Is the player online? Name is case sensitive!)");
+            return true;
+        }
+        plugin.getLampManager().dropNewLamp(reciever.getLocation());
         sender.sendMessage(ChatColor.GREEN + "[Genie] Lamp Dropped!");
         return true;
     }
-    
+
 }

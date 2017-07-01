@@ -31,15 +31,15 @@ public class LampManager {
         return uuid;
     }
     
-    public void dropNewLamp(Location loc, UUID owner) {
-        loc.getWorld().dropItem(loc, plugin.getLampManager().newLamp(owner));
+    public void dropNewLamp(Location loc) {
+        loc.getWorld().dropItem(loc, plugin.getLampManager().newLamp());
     }
     
-    public LampItem newLamp(UUID owner) {
+    public LampItem newLamp() {
         UUID lampID = newLampID();
-        Lamp lamp = new Lamp(owner, lampID);
+        Lamp lamp = new Lamp(lampID);
         addNewLamp(lamp);
-        return new LampItem(owner, lampID);
+        return new LampItem(lampID);
     }
     
     public Lamp getLamp(UUID lampID) {

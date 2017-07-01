@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.djrapitops.genie.lamp;
 
 import java.util.Arrays;
@@ -19,7 +14,7 @@ import org.bukkit.inventory.meta.ItemMeta;
  */
 public class LampItem extends ItemStack {
 
-    public LampItem(UUID owner, UUID lampID) {
+    public LampItem(UUID lampID) {
         super(Material.GOLD_INGOT);
         ItemMeta meta = this.getItemMeta();
         meta.setUnbreakable(true);
@@ -28,7 +23,7 @@ public class LampItem extends ItemStack {
             "Hold to make a wish", "Rub to summon Genie"
         }));
         setItemMeta(meta);
-        super.addEnchantment(Enchantment.LUCK, 1);
+        super.addUnsafeEnchantment(Enchantment.PROTECTION_FALL, 1);
     }
 
     public static boolean isLampItem(ItemStack item) {
@@ -40,7 +35,7 @@ public class LampItem extends ItemStack {
         if (lore.size() < 2 || !"Hold to make a wish".equals(lore.get(0)) || !"Rub to summon Genie".equals(lore.get(1))) {
             return false;
         }
-        if (item.getEnchantments().get(Enchantment.LUCK) == null) {
+        if (item.getEnchantments().get(Enchantment.PROTECTION_FALL) == null) {
             return false;
         }
         return true;

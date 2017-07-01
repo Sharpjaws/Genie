@@ -25,9 +25,11 @@ public class Genie extends RslPlugin<Genie> {
     public void onEnable() {
         super.setInstance(this);
         super.setLogPrefix("[Genie]");
-        super.setColorScheme(new ColorScheme(ChatColor.AQUA, ChatColor.GRAY, ChatColor.DARK_AQUA));
+        super.setUpdateCheckUrl("https://raw.githubusercontent.com/Rsl1122/Genie/master/Genie/src/main/resources/plugin.yml");
+        super.setColorScheme(new ColorScheme(ChatColor.DARK_AQUA, ChatColor.GRAY, ChatColor.AQUA));
         super.setDebugMode("console");
         super.onEnableDefaultTasks();
+        processStatus().startExecution("onEnable");
         wishLog = new WishLog(this);
         try {
             LampStorage lampStorage = new LampStorage(this);
@@ -40,6 +42,7 @@ public class Genie extends RslPlugin<Genie> {
         }
         registerListener(new ChatListener(this));
         registerCommand(new GenieCommand(this));
+        processStatus().finishExecution("onEnable");
         Log.info("Plugin Enabled.");
     }
 

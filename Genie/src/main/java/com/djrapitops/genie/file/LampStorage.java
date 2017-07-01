@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.djrapitops.genie.file;
 
 import com.djrapitops.genie.Genie;
@@ -47,7 +42,6 @@ public class LampStorage extends ConfigFile {
             ConfigurationSection lampsC = config.getConfigurationSection("Lamps");
             Map<String, Serializable> values = new HashMap<>();
             values.put("wishes", lamp.getWishes());
-            values.put("owner", lamp.getOwner().toString());
             lampsC.set(lamp.getLampID().toString(), values);
             config.set("Lamps", lampsC);
             save();
@@ -64,10 +58,8 @@ public class LampStorage extends ConfigFile {
             Set<String> keys = lampsC.getKeys(false);
             for (String key : keys) {
                 int wishes = lampsC.getInt(key + ".wishes");
-                String owner = lampsC.getString(key + ".owner");
-                UUID uuid = UUID.fromString(owner);
                 UUID lampId = UUID.fromString(key);
-                lamps.put(lampId, new Lamp(uuid, lampId, wishes));
+                lamps.put(lampId, new Lamp(lampId, wishes));
             }
         }
         return lamps;
