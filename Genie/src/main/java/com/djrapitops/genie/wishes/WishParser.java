@@ -4,15 +4,16 @@ import com.djrapitops.genie.Genie;
 import com.djrapitops.genie.Log;
 import com.djrapitops.genie.file.WishConfigSectionHandler;
 import com.djrapitops.genie.file.WishLog;
-import com.djrapitops.genie.wishes.mob.FarmWish;
-import com.djrapitops.genie.wishes.mob.ItemWish;
-import com.djrapitops.genie.wishes.mob.SpawnMobRidingOnWish;
-import com.djrapitops.genie.wishes.mob.SpawnMobWish;
+import com.djrapitops.genie.wishes.item.*;
+import com.djrapitops.genie.wishes.mob.*;
+import com.djrapitops.genie.wishes.world.*;
 import com.djrapitops.javaplugin.task.RslBukkitRunnable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -42,6 +43,40 @@ public class WishParser {
 
     private void addWishes() {
         List<Wish> toAdd = new ArrayList<>();
+        addMobWishes(toAdd);
+        addItemWishes(toAdd);
+        toAdd.add(new AnimalWish());
+        toAdd.add(new FarmWish());
+        toAdd.add(new FoodWish());
+        toAdd.add(new ArmorWish("CHAINMAIL"));
+        toAdd.add(new ArmorWish("LEATHER"));
+        toAdd.add(new ArmorWish("DIAMOND"));
+        toAdd.add(new ArmorWish("IRON"));
+        toAdd.add(new ArmorWish("GOLD"));
+        toAdd.add(new DogWish());
+        toAdd.add(new DogTreatWish());
+        toAdd.add(new CatWish());
+        toAdd.add(new CatTreatWish());
+        toAdd.add(new SunnyWish());
+        toAdd.add(new ThunderWish());
+        Collections.sort(toAdd, new WishComparator());
+        for (Wish wish : toAdd) {
+            addWish(wish);
+        }
+        Log.info("Initialized with " + wishes.size() + " wishes");
+        plugin.processStatus().setStatus("Wishes", wishes.size() + "");
+    }
+
+    private void addItemWishes(List<Wish> toAdd) {
+        List<Material> preventedMats = getPreventedItems();
+        for (Material material : Material.values()) {
+            if (!preventedMats.contains(material)) {
+                toAdd.add(new ItemWish(material));
+            }
+        }
+    }
+
+    private List<Wish> addMobWishes(List<Wish> toAdd) {
         List<EntityType> prevented = getPreventedEntities();
         for (EntityType mob : EntityType.values()) {
             if (!prevented.contains(mob)) {
@@ -53,21 +88,10 @@ public class WishParser {
                 }
             }
         }
-        List<Material> preventedMats = getPreventedItems();
-        for (Material material : Material.values()) {
-            if (!preventedMats.contains(material)) {
-                toAdd.add(new ItemWish(material));
-            }
-        }
-        toAdd.add(new FarmWish());
-        Collections.sort(toAdd, new WishComparator());
-        for (Wish wish : toAdd) {
-            addWish(wish);
-        }
-        Log.info("Initialized with " + wishes.size() + " wishes");
-        plugin.processStatus().setStatus("Wishes", wishes.size() + "");
+        return toAdd;
     }
 
+    // TODO Older version support
     public List<EntityType> getPreventedEntities() {
         List<EntityType> prevented = Arrays.asList(new EntityType[]{
             EntityType.AREA_EFFECT_CLOUD, EntityType.ARMOR_STAND, EntityType.COMPLEX_PART,
@@ -82,11 +106,12 @@ public class WishParser {
             EntityType.PLAYER, EntityType.PRIMED_TNT, EntityType.SHULKER_BULLET,
             EntityType.THROWN_EXP_BOTTLE, EntityType.TIPPED_ARROW, EntityType.UNKNOWN,
             EntityType.WEATHER, EntityType.WITHER_SKULL, EntityType.ARROW, EntityType.BOAT,
-            EntityType.SPLASH_POTION, EntityType.SMALL_FIREBALL
+            EntityType.SPLASH_POTION, EntityType.SMALL_FIREBALL, EntityType.ENDER_DRAGON
         });
         return prevented;
     }
 
+    // TODO Older version support
     public List<Material> getPreventedItems() {
         List<Material> prevented = Arrays.asList(new Material[]{
             Material.ACACIA_DOOR, Material.BEDROCK, Material.AIR,
@@ -107,7 +132,7 @@ public class WishParser {
             Material.SNOW, Material.SPRUCE_DOOR, Material.SUGAR_CANE_BLOCK,
             Material.STRUCTURE_BLOCK, Material.STRUCTURE_VOID, Material.STANDING_BANNER,
             Material.STATIONARY_WATER, Material.STATIONARY_LAVA, Material.TIPPED_ARROW,
-            Material.TRIPWIRE, Material.WALL_SIGN, Material.WATER,
+            Material.TRIPWIRE, Material.WALL_SIGN, Material.WATER, Material.WATER_LILY,
             Material.LAVA, Material.WRITTEN_BOOK, Material.WALL_BANNER});
         return prevented;
     }
@@ -129,13 +154,27 @@ public class WishParser {
      */
     public boolean wish(Player p, String wish) {
         log.madeAWish(p, wish);
-        Wish match = getMatchingWish(wish);
-        if (match != null) {
+        String[] parts = wish.split(" with ");
+        Set<Wish> matches = new HashSet<>();
+        int i = 0;
+        for (String part : parts) {
+            if (i >= 2) {
+                break;
+            }
+            Wish match = getMatchingWish(part.trim());
+            if (match != null) {
+                matches.add(match);
+            }
+            i++;
+        }
+        if (!matches.isEmpty()) {
             new RslBukkitRunnable<Genie>("WishFulfillmentTask") {
                 @Override
                 public void run() {
                     try {
-                        match.fulfillWish(p);
+                        for (Wish wish : matches) {
+                            wish.fulfillWish(p);
+                        }
                     } finally {
                         this.cancel();
                     }
@@ -150,21 +189,21 @@ public class WishParser {
         List<Wish> matches = new ArrayList<>(wishes);
         //remove
         String parsedWish = removeCommonWords(wish);
-        Log.debug("Parsed wish: " + parsedWish);
         Collections.sort(matches, new WishMatchComparator(parsedWish));
-        Log.debug("Top 5:");
+        Log.debug("Wish: " + wish + " | Top 5:");
         int i = 0;
         for (Wish match : matches) {
             if (i > 4) {
                 break;
             }
-            Log.debug(match.getAliases() + ": " + match.getMatchPercentage(parsedWish));
+            String bestMatch = match.getBestMatch(parsedWish);
+            Log.debug(bestMatch + ": " + match.getRelativeDiffPercentage(bestMatch, parsedWish));
             i++;
         }
         //
         Wish match = matches.get(0);
-        double percentage = match.getMatchPercentage(parsedWish); // Lower is better
-        Log.debug("Wish: " + wish + " | Match: " + match.getAliases() + " | Remain: " + percentage);
+        String bestMatch = match.getBestMatch(parsedWish);
+        double percentage = match.getRelativeDiffPercentage(bestMatch, parsedWish); // Lower is better
         if (percentage > 0.6) {
             return null;
         }
@@ -174,7 +213,7 @@ public class WishParser {
     private String removeCommonWords(String wish) {
         String[] commonWords = new String[]{
             "i", "you", "him", "her", "a", "the", "had", "wish", "get", "set",
-            "be", "of", "and", "in", "that", "have", "it", "for", "not", "as", "do",
+            "be", "of", "and", "in", "that", "have", "it", "for", "as", "do",
             "from", "an", "this", "but", "his", "by", "they", "we", "say", "her", "or",
             "will", "my", "all", "would", "their", "there", "what", "so", "up", "out", "if",
             "about", "who", "which", "go", "me", "when", "make", "can", "like", "time", "no",
@@ -187,8 +226,15 @@ public class WishParser {
         parsed = parsed.replace("here", "teleporthere");
         for (String word : commonWords) {
             parsed = parsed.replace(" " + word + " ", " ");
-            parsed = parsed.replace("" + word + " ", " ");
+            // Remove if first word
+            if (parsed.charAt(0) == word.charAt(0)) {
+                parsed = parsed.replace(word + " ", " ");
+            }
+            // Remove if last word
+            if (parsed.charAt(parsed.length() - 1) == word.charAt(word.length() - 1)) {
+                parsed = parsed.replace(" " + word, " ");
+            }
         }
-        return parsed;
+        return parsed.trim();
     }
 }

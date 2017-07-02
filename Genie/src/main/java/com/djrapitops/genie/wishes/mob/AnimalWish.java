@@ -15,12 +15,12 @@ import org.bukkit.entity.Player;
  *
  * @author Risto
  */
-public class FarmWish extends Wish {
+public class AnimalWish extends Wish {
 
     private final List<Wish> mobWishes;
 
-    public FarmWish() {
-        super("Farm, Animals");
+    public AnimalWish() {
+        super("Animals");
         mobWishes = new ArrayList<>();
         addWishes();
     }

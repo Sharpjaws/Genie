@@ -5,6 +5,7 @@
  */
 package com.djrapitops.genie.wishes.mob;
 
+import com.djrapitops.genie.utilities.FormatUtils;
 import com.djrapitops.genie.wishes.Wish;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -22,14 +23,19 @@ public class SpawnMobRidingOnWish extends Wish {
     private final EntityType mobToStack;
 
     public SpawnMobRidingOnWish(EntityType mobToSpawn, EntityType mobToStack) {
-        super(getProperMobname(mobToStack.name()) + ", on, " + getProperMobname(mobToSpawn.name()));
+        super(getProperMobnames(mobToStack.name(), mobToSpawn.name()));
         this.mobToSpawn = mobToSpawn;
         this.mobToStack = mobToStack;
     }
 
-    private static String getProperMobname(String mobName) {
-        String replacedWSpace = mobName.replace("_", " ");
-        return replacedWSpace;
+    private static String[] getProperMobnames(String mobName, String stackMobName) {
+        String[] first = FormatUtils.getProperName(mobName);
+        String[] second = FormatUtils.getProperName(stackMobName);
+        String replacedWSpaceBoth = first[0] + ", on, " + second[0];
+        String replacedWSpaceFirst = first[0] + ", on, " + second[1];
+        String replacedWSpaceLast = first[1] + ", on, " + second[0];
+        String replacedWNone = first[1] + ", on, " + second[1];
+        return new String[]{replacedWSpaceBoth, replacedWSpaceFirst, replacedWSpaceLast, replacedWNone};
     }
 
     @Override

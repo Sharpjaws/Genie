@@ -5,6 +5,7 @@
  */
 package com.djrapitops.genie.wishes.mob;
 
+import com.djrapitops.genie.utilities.FormatUtils;
 import com.djrapitops.genie.wishes.Wish;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
@@ -19,13 +20,8 @@ public class SpawnMobWish extends Wish {
     private final EntityType mobToSpawn;
 
     public SpawnMobWish(EntityType mobToSpawn) {
-        super(getProperMobname(mobToSpawn.name()));
+        super(FormatUtils.getProperName(mobToSpawn.name()));
         this.mobToSpawn = mobToSpawn;
-    }
-
-    private static String getProperMobname(String mobName) {
-        String replacedWSpace = mobName.replace("_", " ");
-        return replacedWSpace;
     }
 
     @Override
