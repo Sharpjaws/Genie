@@ -6,6 +6,11 @@ The theme of the competition is Magic.
 Contains plugin framework:
 - [BukkitPluginDependency](https://github.com/Rsl1122/BukkitPluginDependency)
 
+## ![Installation](http://puu.sh/wzEuf/855309e2b0.jpg)
+
+- Drop the plugin in the plugins folder & restart the server
+- Currently only compatible with 1.12 Bukkit/Spigot
+
 ## ![Features](http://puu.sh/wzEu4/fd4115d518.jpg)
 
 - Adds a genie lamp that is dropped by mobs in the desert (1 / 400) & more rarely outside (1 / 5000)
