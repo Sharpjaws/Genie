@@ -2,7 +2,6 @@ package com.djrapitops.genie.file;
 
 import com.djrapitops.genie.Genie;
 import com.djrapitops.genie.wishes.Wish;
-import java.util.HashMap;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 

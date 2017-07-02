@@ -15,6 +15,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
@@ -45,6 +46,7 @@ public class WishParser {
         List<Wish> toAdd = new ArrayList<>();
         addMobWishes(toAdd);
         addItemWishes(toAdd);
+        // addEnchantWishes(toAdd); // Can't combine unsafe books in an anvil
         toAdd.add(new AnimalWish());
         toAdd.add(new FarmWish());
         toAdd.add(new FoodWish());
@@ -59,12 +61,24 @@ public class WishParser {
         toAdd.add(new CatTreatWish());
         toAdd.add(new SunnyWish());
         toAdd.add(new ThunderWish());
+        toAdd.add(new ExplosionWish());
         Collections.sort(toAdd, new WishComparator());
         for (Wish wish : toAdd) {
             addWish(wish);
         }
         Log.info("Initialized with " + wishes.size() + " wishes");
         plugin.processStatus().setStatus("Wishes", wishes.size() + "");
+    }
+
+    private void addEnchantWishes(List<Wish> toAdd) {
+        for (Enchantment enchant : Enchantment.values()) {
+            for (int i = 1; i <= 10; i++) {
+                toAdd.add(new EnchantmentWish(enchant, "" + i));
+            }
+            for (String romanLevel : "I,II,III,IV,V,VI,VII,VIII,IIX,IX,X".split(",")) {
+                toAdd.add(new EnchantmentWish(enchant, romanLevel));
+            }
+        }
     }
 
     private void addItemWishes(List<Wish> toAdd) {
@@ -190,7 +204,7 @@ public class WishParser {
         //remove
         String parsedWish = removeCommonWords(wish);
         Collections.sort(matches, new WishMatchComparator(parsedWish));
-        Log.debug("Wish: " + wish + " | Top 5:");
+        Log.debug("Wish: " + wish + " | Parsed: " + parsedWish + " | Top 5:");
         int i = 0;
         for (Wish match : matches) {
             if (i > 4) {
@@ -222,8 +236,7 @@ public class WishParser {
             "its", "over", "think", "also", "back", "after", "use", "our", "work", "first",
             "well", "way", "even", "new", "want", "because", "any", "these", "give", "day",
             "most", "us"};
-        String parsed = wish.replace("to", "teleportto");
-        parsed = parsed.replace("here", "teleporthere");
+        String parsed = wish.replace(" here ", "teleporthere");
         for (String word : commonWords) {
             parsed = parsed.replace(" " + word + " ", " ");
             // Remove if first word

@@ -1,9 +1,13 @@
 package com.djrapitops.genie.lamp;
 
 import com.djrapitops.genie.Genie;
+import com.djrapitops.genie.Log;
 import com.djrapitops.genie.file.LampStorage;
+import java.io.IOException;
 import java.util.Map;
 import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.bukkit.Location;
 
 /**
@@ -31,15 +35,19 @@ public class LampManager {
         return uuid;
     }
 
-    public void dropNewLamp(Location loc) {
-        loc.getWorld().dropItem(loc, plugin.getLampManager().newLamp());
+    public void dropLamp(Location loc, LampItem item) {
+        loc.getWorld().dropItem(loc, item);
+    }
+
+    public LampItem newLamp(int wishes) {
+        UUID lampID = newLampID();
+        Lamp lamp = new Lamp(lampID, wishes);
+        addNewLamp(lamp);
+        return new LampItem(lampID);
     }
 
     public LampItem newLamp() {
-        UUID lampID = newLampID();
-        Lamp lamp = new Lamp(lampID);
-        addNewLamp(lamp);
-        return new LampItem(lampID);
+        return newLamp(3);
     }
 
     public Lamp getLamp(UUID lampID) {
@@ -52,6 +60,11 @@ public class LampManager {
     }
 
     public void wish(Lamp lamp) {
-        store.wishUsed(lamp);
+        lamp.useWish();
+        try {
+            store.wishUsed(lamp);
+        } catch (IOException ex) {
+            Log.toLog(this.getClass().getName(), ex);
+        }
     }
 }

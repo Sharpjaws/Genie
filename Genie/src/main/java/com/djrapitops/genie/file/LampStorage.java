@@ -65,12 +65,13 @@ public class LampStorage extends ConfigFile {
         return lamps;
     }
 
-    public void wishUsed(Lamp lamp) {
+    public void wishUsed(Lamp lamp) throws IOException {
         FileConfiguration config = getConfig();
-        config.set("Lamps." + lamp.getLampID().toString() + ".wishese", lamp.getWishes());
+        config.set("Lamps." + lamp.getLampID().toString() + ".wishes", lamp.getWishes());
+        save();
     }
 
-    public void genieFreed(Lamp lamp) {
+    public void genieFreed(Lamp lamp) throws IOException {
         while (lamp.hasWishesLeft()) {
             lamp.useWish();
         }
