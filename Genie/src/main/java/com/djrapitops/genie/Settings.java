@@ -10,6 +10,8 @@ package com.djrapitops.genie;
  */
 public enum Settings {
     DEBUG("Settings.Debug"),
+    DROPRATE_DESERT("Settings.DesertDropRate"),
+    DROPRATE_OUTSIDE("Settings.OutsideDropRate"),
     WORLD_BLACKLIST("Settings.BlacklistedWorlds");
 
     private final String path;

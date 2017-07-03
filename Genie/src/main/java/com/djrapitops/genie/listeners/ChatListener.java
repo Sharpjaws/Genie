@@ -1,18 +1,13 @@
 package com.djrapitops.genie.listeners;
 
 import com.djrapitops.genie.Genie;
-import com.djrapitops.genie.Settings;
 import com.djrapitops.genie.lamp.Lamp;
 import com.djrapitops.genie.lamp.LampItem;
 import com.djrapitops.genie.lamp.LampManager;
 import com.djrapitops.javaplugin.api.ColorScheme;
-import com.djrapitops.javaplugin.api.TimeAmount;
 import com.djrapitops.javaplugin.task.RslBukkitRunnable;
-import com.djrapitops.javaplugin.utilities.BenchmarkUtil;
-import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
-import net.md_5.bungee.api.ChatColor;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -67,6 +62,7 @@ public class ChatListener implements Listener {
                         });
                     } else {
                         player.sendMessage(color.getMainColor() + "[Genie] " + color.getSecondColor() + "Sorry, I do not know how to fulfill your wish");
+                        event.setCancelled(true);
                     }
                 } finally {
                     this.cancel();

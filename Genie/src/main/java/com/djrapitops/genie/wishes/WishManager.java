@@ -6,6 +6,8 @@ import com.djrapitops.genie.file.WishConfigSectionHandler;
 import com.djrapitops.genie.file.WishLog;
 import com.djrapitops.genie.wishes.item.*;
 import com.djrapitops.genie.wishes.mob.*;
+import com.djrapitops.genie.wishes.other.FlyingWish;
+import com.djrapitops.genie.wishes.potion.PotionEffectWish;
 import com.djrapitops.genie.wishes.teleport.TeleportHereWish;
 import com.djrapitops.genie.wishes.teleport.TeleportToBedWish;
 import com.djrapitops.genie.wishes.teleport.TeleportToWish;
@@ -21,6 +23,7 @@ import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.potion.PotionEffectType;
 
 /**
  *
@@ -49,6 +52,7 @@ public class WishManager {
         List<Wish> toAdd = new ArrayList<>();
         addMobWishes(toAdd);
         addItemWishes(toAdd);
+        addPotionWishes(toAdd);
         // addEnchantWishes(toAdd); // Can't combine unsafe books in an anvil
         toAdd.add(new AnimalWish());
         toAdd.add(new FarmWish());
@@ -69,6 +73,9 @@ public class WishManager {
         toAdd.add(new TeleportToBedWish());
         toAdd.add(new TeleportToWish());
         toAdd.add(new AssasinWish());
+        toAdd.add(new FlyingWish());
+        toAdd.add(new DayWish());
+        toAdd.add(new NightWish());
         Collections.sort(toAdd, new WishComparator());
         for (Wish wish : toAdd) {
             addWish(wish);
@@ -86,6 +93,16 @@ public class WishManager {
             for (String romanLevel : "I,II,III,IV,V,VI,VII,VIII,IIX,IX,X".split(",")) {
                 toAdd.add(new EnchantmentWish(enchant, romanLevel));
             }
+        }
+    }
+
+    private void addPotionWishes(List<Wish> toAdd) {
+        List<PotionEffectType> prevented = getPreventedPotions();
+        for (PotionEffectType type : PotionEffectType.values()) {
+            if (prevented.contains(type)) {
+                continue;
+            }
+            toAdd.add(new PotionEffectWish(type));
         }
     }
 
@@ -114,6 +131,15 @@ public class WishManager {
     }
 
     // TODO Older version support
+    public List<PotionEffectType> getPreventedPotions() {
+        List<PotionEffectType> prevented = Arrays.asList(new PotionEffectType[]{
+            PotionEffectType.WITHER,
+            null
+        });
+        return prevented;
+    }
+
+    // TODO Older version support
     public List<EntityType> getPreventedEntities() {
         List<EntityType> prevented = Arrays.asList(new EntityType[]{
             EntityType.AREA_EFFECT_CLOUD, EntityType.ARMOR_STAND, EntityType.COMPLEX_PART,
@@ -128,7 +154,8 @@ public class WishManager {
             EntityType.PLAYER, EntityType.PRIMED_TNT, EntityType.SHULKER_BULLET,
             EntityType.THROWN_EXP_BOTTLE, EntityType.TIPPED_ARROW, EntityType.UNKNOWN,
             EntityType.WEATHER, EntityType.WITHER_SKULL, EntityType.ARROW, EntityType.BOAT,
-            EntityType.SPLASH_POTION, EntityType.SMALL_FIREBALL, EntityType.ENDER_DRAGON
+            EntityType.SPLASH_POTION, EntityType.SMALL_FIREBALL, EntityType.ENDER_DRAGON,
+            null
         });
         return prevented;
     }
@@ -155,7 +182,8 @@ public class WishManager {
             Material.STRUCTURE_BLOCK, Material.STRUCTURE_VOID, Material.STANDING_BANNER,
             Material.STATIONARY_WATER, Material.STATIONARY_LAVA, Material.TIPPED_ARROW,
             Material.TRIPWIRE, Material.WALL_SIGN, Material.WATER, Material.WATER_LILY,
-            Material.LAVA, Material.WRITTEN_BOOK, Material.WALL_BANNER});
+            Material.LAVA, Material.WRITTEN_BOOK, Material.WALL_BANNER, Material.POTATO,
+            null});
         return prevented;
     }
 
@@ -221,7 +249,9 @@ public class WishManager {
         // Places UUID of target to the storage of the wish.
         if (match instanceof PlayerSpecificWish) {
             PlayerSpecificWish pSpecMatch = (PlayerSpecificWish) match;
-            pSpecMatch.placeInStore(p.getUniqueId(), pSpecMatch.getUUIDForPlayerInMatch(match.getAliases(), bestMatch));
+            if (p != null) {
+                pSpecMatch.placeInStore(p.getUniqueId(), pSpecMatch.getUUIDForPlayerInMatch(match.getAliases(), bestMatch));
+            }
         }
 
         double percentage = match.getRelativeDiffPercentage(bestMatch, parsedWish); // Lower is better
@@ -254,7 +284,7 @@ public class WishManager {
             "just", "him", "know", "take", "people", "into", "year", "your", "good", "some",
             "could", "them", "see", "other", "than", "then", "now", "look", "only", /*"come",*/
             "its", "over", "think", "also", "back", "after", "use", "our", "work", "first",
-            "well", "way", "even", "new", "want", "because", "any", "these", "give", "day",
+            "well", "way", "even", "new", "want", "because", "any", "these", "give", "was",
             "most", "us"};
         String parsed = wish;
         for (String word : commonWords) {

@@ -6,6 +6,8 @@ import com.djrapitops.genie.file.LampStorage;
 import com.djrapitops.genie.file.WishConfigSectionHandler;
 import com.djrapitops.genie.file.WishLog;
 import com.djrapitops.genie.lamp.LampManager;
+import com.djrapitops.genie.listeners.DeathListener;
+import com.djrapitops.genie.listeners.ItemInteractionListener;
 import com.djrapitops.genie.wishes.WishManager;
 import com.djrapitops.javaplugin.RslPlugin;
 import com.djrapitops.javaplugin.api.ColorScheme;
@@ -56,6 +58,8 @@ public class Genie extends RslPlugin<Genie> {
             return;
         }
         registerListener(new ChatListener(this));
+        registerListener(new DeathListener(this));
+        registerListener(new ItemInteractionListener(this));
         registerCommand(new GenieCommand(this));
         processStatus().finishExecution("onEnable");
         Log.info("Plugin Enabled.");
@@ -89,8 +93,9 @@ public class Genie extends RslPlugin<Genie> {
     }
 
     private void updateBlacklist() {
-        blacklistedWorlds = getConfig().getStringList(Settings.WORLD_BLACKLIST.getPath())
-                .stream().map(l -> l.toLowerCase()).collect(Collectors.toList());
+        blacklistedWorlds = getConfig().getStringList(Settings.WORLD_BLACKLIST.getPath()).stream()
+                .map(l -> l.toLowerCase())
+                .collect(Collectors.toList());
     }
 
     public boolean isWorldAllowed(World w) {

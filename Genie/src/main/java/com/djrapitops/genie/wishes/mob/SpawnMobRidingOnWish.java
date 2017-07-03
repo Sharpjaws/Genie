@@ -7,6 +7,8 @@ package com.djrapitops.genie.wishes.mob;
 
 import com.djrapitops.genie.utilities.FormatUtils;
 import com.djrapitops.genie.wishes.Wish;
+import java.util.ArrayList;
+import java.util.List;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -31,11 +33,14 @@ public class SpawnMobRidingOnWish extends Wish {
     private static String[] getProperMobnames(String mobName, String stackMobName) {
         String[] first = FormatUtils.getProperName(mobName);
         String[] second = FormatUtils.getProperName(stackMobName);
-        String replacedWSpaceBoth = first[0] + ", on, " + second[0];
-        String replacedWSpaceFirst = first[0] + ", on, " + second[1];
-        String replacedWSpaceLast = first[1] + ", on, " + second[0];
-        String replacedWNone = first[1] + ", on, " + second[1];
-        return new String[]{replacedWSpaceBoth, replacedWSpaceFirst, replacedWSpaceLast, replacedWNone};
+        List<String> names = new ArrayList<>();
+        for (String mid : new String[]{", on, ", ", riding, "}) {
+            names.add(first[0] + mid + second[0]);
+            names.add(first[0] + mid + second[1]);
+            names.add(first[1] + mid + second[0]);
+            names.add(first[1] + mid + second[1]);
+        }
+        return names.toArray(new String[names.size()]);
     }
 
     @Override

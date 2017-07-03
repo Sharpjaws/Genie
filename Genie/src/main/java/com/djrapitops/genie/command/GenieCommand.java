@@ -7,6 +7,7 @@ package com.djrapitops.genie.command;
 
 import com.djrapitops.genie.Genie;
 import com.djrapitops.genie.command.commands.GiveLampCommand;
+import com.djrapitops.genie.command.commands.TestWishCommand;
 import com.djrapitops.javaplugin.command.CommandType;
 import com.djrapitops.javaplugin.command.StatusCommand;
 import com.djrapitops.javaplugin.command.TreeCommand;
@@ -25,6 +26,7 @@ public class GenieCommand extends TreeCommand<Genie> {
     @Override
     public void addCommands() {
         commands.add(new GiveLampCommand(plugin));
+        commands.add(new TestWishCommand(plugin));
         commands.add(new StatusCommand<>(plugin, this.getPermission()));
     }
 

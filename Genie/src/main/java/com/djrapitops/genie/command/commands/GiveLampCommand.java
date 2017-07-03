@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.djrapitops.genie.command.commands;
 
 import com.djrapitops.genie.Genie;
@@ -13,10 +8,9 @@ import com.djrapitops.javaplugin.command.SubCommand;
 import com.djrapitops.javaplugin.command.sender.ISender;
 import com.djrapitops.javaplugin.utilities.UUIDFetcher;
 import java.util.UUID;
-import net.md_5.bungee.api.ChatColor;
 import org.bukkit.entity.Player;
 import static org.bukkit.Bukkit.getPlayer;
-import static org.bukkit.Bukkit.getPlayer;
+import org.bukkit.ChatColor;
 
 /**
  * Command used to give a player the lamp.

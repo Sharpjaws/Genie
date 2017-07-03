@@ -1,5 +1,7 @@
 Settings:
   Debug: false
+  DesertDropRate: 1
+  OutsideDropRate: 0.15
   BlacklistedWorlds:
     - WorldName
 Customization:

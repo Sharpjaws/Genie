@@ -8,6 +8,7 @@ package com.djrapitops.genie.utilities;
 import java.util.HashMap;
 import java.util.Map;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.potion.PotionEffectType;
 
 /**
  *
@@ -22,6 +23,33 @@ public class FormatUtils {
         return new String[]{replacedWSpace, replacedWNone};
     }
 
+    public static String[] getPotionNames(PotionEffectType type) {
+        Map<PotionEffectType, String[]> names = new HashMap<>();
+        names.put(PotionEffectType.BLINDNESS, new String[]{"Blindness", "Blind"});
+        names.put(PotionEffectType.CONFUSION, new String[]{"Confusion", "Confused"});
+        names.put(PotionEffectType.DAMAGE_RESISTANCE, new String[]{"Tough", "Damage Resistance", "Damage resistant"});
+        names.put(PotionEffectType.FAST_DIGGING, new String[]{"Fast digging", "dig fast"});
+        names.put(PotionEffectType.FIRE_RESISTANCE, new String[]{"FIRE RESISTANCE", "Fire resistant"});
+        names.put(PotionEffectType.HARM, new String[]{"Harmed", "Hurt", "Harm"});
+        names.put(PotionEffectType.HEAL, new String[]{"Healed", "Heal", "Healing"});
+        names.put(PotionEffectType.HEALTH_BOOST, new String[]{"More, health", "health, boost"});
+        names.put(PotionEffectType.HUNGER, new String[]{"Hungry", "Hunger"});
+        names.put(PotionEffectType.INCREASE_DAMAGE, new String[]{"Increase Damage", "Increased Damage", "Strength", "Power", "Strong"});
+        names.put(PotionEffectType.INVISIBILITY, new String[]{"Invisibility", "Invisible"});
+        names.put(PotionEffectType.JUMP, new String[]{"Jump", "Jump higher"});
+        names.put(PotionEffectType.LEVITATION, new String[]{"Levitating", "Floating", "Levitate", "Float", "Levitation"});
+        names.put(PotionEffectType.LUCK, new String[]{"Lucky", "Luck"});
+        names.put(PotionEffectType.NIGHT_VISION, new String[]{"NIGHT VISION", "See dark"});
+        names.put(PotionEffectType.SATURATION, new String[]{"not hungry"});
+        names.put(PotionEffectType.SPEED, new String[]{"Speed", "Faster", "fast", "Sanic", "Sonic"});
+        names.put(PotionEffectType.WATER_BREATHING, new String[]{"WATER BREATHING", "Breath, underwater"});
+        names.put(PotionEffectType.REGENERATION, new String[]{"Regeneration", "Regen, Health", "Regenerating"});
+        String[] name = names.get(type);
+        if (name == null) {
+            name = getProperName(type.getName());
+        }
+        return name;
+    }
     public static String[] getEnchantmentName(Enchantment e, String level) {
         Map<Enchantment, String[]> names = new HashMap<>();
         names.put(Enchantment.ARROW_DAMAGE, new String[]{"Arrow damage", "Power", "Bow Damage"});
