@@ -7,3 +7,8 @@ commands:
     genie:
         usage: /genie [subcommand]
         description: Base command for genie admin commands.
+        
+permissions:
+    genie.admin:
+        default: op
+        description: Access the '/genie' admin command

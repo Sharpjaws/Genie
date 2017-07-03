@@ -6,6 +6,9 @@ import com.djrapitops.genie.file.WishConfigSectionHandler;
 import com.djrapitops.genie.file.WishLog;
 import com.djrapitops.genie.wishes.item.*;
 import com.djrapitops.genie.wishes.mob.*;
+import com.djrapitops.genie.wishes.teleport.TeleportHereWish;
+import com.djrapitops.genie.wishes.teleport.TeleportToBedWish;
+import com.djrapitops.genie.wishes.teleport.TeleportToWish;
 import com.djrapitops.genie.wishes.world.*;
 import com.djrapitops.javaplugin.task.RslBukkitRunnable;
 import java.util.ArrayList;
@@ -23,7 +26,7 @@ import org.bukkit.entity.Player;
  *
  * @author Rsl1122
  */
-public class WishParser {
+public class WishManager {
 
     private final Genie plugin;
     private final List<Wish> wishes;
@@ -34,7 +37,7 @@ public class WishParser {
      *
      * @param plugin
      */
-    public WishParser(Genie plugin) {
+    public WishManager(Genie plugin) {
         this.plugin = plugin;
         this.log = plugin.getWishLog();
         this.configSection = plugin.getWishConfigSectionHandler();
@@ -62,6 +65,10 @@ public class WishParser {
         toAdd.add(new SunnyWish());
         toAdd.add(new ThunderWish());
         toAdd.add(new ExplosionWish());
+        toAdd.add(new TeleportHereWish());
+        toAdd.add(new TeleportToBedWish());
+        toAdd.add(new TeleportToWish());
+        toAdd.add(new AssasinWish());
         Collections.sort(toAdd, new WishComparator());
         for (Wish wish : toAdd) {
             addWish(wish);
@@ -70,6 +77,7 @@ public class WishParser {
         plugin.processStatus().setStatus("Wishes", wishes.size() + "");
     }
 
+    // Can't combine unsafe books in an anvil
     private void addEnchantWishes(List<Wish> toAdd) {
         for (Enchantment enchant : Enchantment.values()) {
             for (int i = 1; i <= 10; i++) {
@@ -175,7 +183,7 @@ public class WishParser {
             if (i >= 2) {
                 break;
             }
-            Wish match = getMatchingWish(part.trim());
+            Wish match = getMatchingWish(part.trim(), p);
             if (match != null) {
                 matches.add(match);
             }
@@ -199,11 +207,31 @@ public class WishParser {
         return false;
     }
 
-    public Wish getMatchingWish(String wish) {
+    public Wish getMatchingWish(String wish, Player p) {
         List<Wish> matches = new ArrayList<>(wishes);
-        //remove
+
         String parsedWish = removeCommonWords(wish);
         Collections.sort(matches, new WishMatchComparator(parsedWish));
+
+        sendDebugMessages(wish, parsedWish, matches);
+
+        Wish match = matches.get(0);
+        String bestMatch = match.getBestMatch(parsedWish);
+
+        // Places UUID of target to the storage of the wish.
+        if (match instanceof PlayerSpecificWish) {
+            PlayerSpecificWish pSpecMatch = (PlayerSpecificWish) match;
+            pSpecMatch.placeInStore(p.getUniqueId(), pSpecMatch.getUUIDForPlayerInMatch(match.getAliases(), bestMatch));
+        }
+
+        double percentage = match.getRelativeDiffPercentage(bestMatch, parsedWish); // Lower is better
+        if (percentage > 0.6) {
+            return null;
+        }
+        return match;
+    }
+
+    private void sendDebugMessages(String wish, String parsedWish, List<Wish> matches) {
         Log.debug("Wish: " + wish + " | Parsed: " + parsedWish + " | Top 5:");
         int i = 0;
         for (Wish match : matches) {
@@ -214,14 +242,6 @@ public class WishParser {
             Log.debug(bestMatch + ": " + match.getRelativeDiffPercentage(bestMatch, parsedWish));
             i++;
         }
-        //
-        Wish match = matches.get(0);
-        String bestMatch = match.getBestMatch(parsedWish);
-        double percentage = match.getRelativeDiffPercentage(bestMatch, parsedWish); // Lower is better
-        if (percentage > 0.6) {
-            return null;
-        }
-        return match;
     }
 
     private String removeCommonWords(String wish) {
@@ -232,11 +252,11 @@ public class WishParser {
             "will", "my", "all", "would", "their", "there", "what", "so", "up", "out", "if",
             "about", "who", "which", "go", "me", "when", "make", "can", "like", "time", "no",
             "just", "him", "know", "take", "people", "into", "year", "your", "good", "some",
-            "could", "them", "see", "other", "than", "then", "now", "look", "only", "come",
+            "could", "them", "see", "other", "than", "then", "now", "look", "only", /*"come",*/
             "its", "over", "think", "also", "back", "after", "use", "our", "work", "first",
             "well", "way", "even", "new", "want", "because", "any", "these", "give", "day",
             "most", "us"};
-        String parsed = wish.replace(" here ", "teleporthere");
+        String parsed = wish;
         for (String word : commonWords) {
             parsed = parsed.replace(" " + word + " ", " ");
             // Remove if first word

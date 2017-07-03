@@ -27,22 +27,16 @@ import org.bukkit.inventory.ItemStack;
 public class ChatListener implements Listener {
 
     private final Genie plugin;
-    private long configRead;
-    private List<String> blacklistedWorlds;
+    
 
     public ChatListener(Genie plugin) {
         this.plugin = plugin;
-        updateBlacklist();
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onChat(AsyncPlayerChatEvent event) {
-        Player player = event.getPlayer();
-        if (configRead < BenchmarkUtil.getTime() - TimeAmount.MINUTE.ms() * 10L) {
-            updateBlacklist();
-        }
-
-        if (blacklistedWorlds.contains(player.getWorld().getName().toLowerCase())) {
+        Player player = event.getPlayer();        
+        if (!plugin.isWorldAllowed(player.getWorld())) {
             return;
         }
         ItemStack item = getItemInhand(player);
@@ -94,14 +88,7 @@ public class ChatListener implements Listener {
         return item;
     }
 
-    private void updateBlacklist() {
-        blacklistedWorlds = plugin.getConfig().getStringList(Settings.WORLD_BLACKLIST.getPath())
-                .stream().map(l -> l.toLowerCase()).collect(Collectors.toList());
-        configRead = BenchmarkUtil.getTime();
-    }
-
     private boolean makeAWish(Player player, String message) {
-        return plugin.getWishParser().wish(player, message);
+        return plugin.getWishManager().wish(player, message);
     }
-
 }

@@ -16,6 +16,7 @@ import java.util.UUID;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.entity.Player;
 import static org.bukkit.Bukkit.getPlayer;
+import static org.bukkit.Bukkit.getPlayer;
 
 /**
  * Command used to give a player the lamp.
@@ -27,7 +28,7 @@ public class GiveLampCommand extends SubCommand {
     private final Genie plugin;
 
     public GiveLampCommand(Genie plugin) {
-        super("give, givelamp, lamp, g", CommandType.CONSOLE_WITH_ARGUMENTS, "genie.admin", "Gives the lamp to user or given player", "[player]");
+        super("give, givelamp, lamp, g", CommandType.CONSOLE_WITH_ARGUMENTS, "genie.admin", "Gives the lamp to user or given player", "[player] [wishes]");
         this.plugin = plugin;
     }
 

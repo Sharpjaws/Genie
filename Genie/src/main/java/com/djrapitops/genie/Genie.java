@@ -6,12 +6,15 @@ import com.djrapitops.genie.file.LampStorage;
 import com.djrapitops.genie.file.WishConfigSectionHandler;
 import com.djrapitops.genie.file.WishLog;
 import com.djrapitops.genie.lamp.LampManager;
-import com.djrapitops.genie.wishes.WishParser;
+import com.djrapitops.genie.wishes.WishManager;
 import com.djrapitops.javaplugin.RslPlugin;
 import com.djrapitops.javaplugin.api.ColorScheme;
 import java.io.IOException;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.World;
 import org.bukkit.configuration.InvalidConfigurationException;
 
 /**
@@ -24,7 +27,8 @@ public class Genie extends RslPlugin<Genie> {
     private LampManager lampManager;
     private WishLog wishLog;
     private WishConfigSectionHandler wishConfigSectionHandler;
-    private WishParser wishParser;
+    private WishManager wishManager;
+    private List<String> blacklistedWorlds;
 
     @Override
     public void onEnable() {
@@ -38,9 +42,10 @@ public class Genie extends RslPlugin<Genie> {
         super.setDebugMode(getConfig().getString(Settings.DEBUG.getPath()));
         super.onEnableDefaultTasks();
         processStatus().startExecution("onEnable");
+        updateBlacklist();
         wishConfigSectionHandler = new WishConfigSectionHandler(this);
         wishLog = new WishLog(this);
-        wishParser = new WishParser(this);
+        wishManager = new WishManager(this);
         try {
             LampStorage lampStorage = new LampStorage(this);
             lampManager = new LampManager(this, lampStorage);
@@ -79,7 +84,16 @@ public class Genie extends RslPlugin<Genie> {
         return wishConfigSectionHandler;
     }
 
-    public WishParser getWishParser() {
-        return wishParser;
+    public WishManager getWishManager() {
+        return wishManager;
+    }
+
+    private void updateBlacklist() {
+        blacklistedWorlds = getConfig().getStringList(Settings.WORLD_BLACKLIST.getPath())
+                .stream().map(l -> l.toLowerCase()).collect(Collectors.toList());
+    }
+
+    public boolean isWorldAllowed(World w) {
+        return !blacklistedWorlds.contains(w.getName().toLowerCase());
     }
 }

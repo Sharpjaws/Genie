@@ -1,5 +1,6 @@
 package com.djrapitops.genie.wishes;
 
+import static org.bukkit.Bukkit.getOnlinePlayers;
 import org.bukkit.entity.Player;
 
 /**
@@ -30,27 +31,27 @@ public abstract class Wish {
 
     public String getBestMatch(String wish) {
         double perc = 2.0;
-        int aliasN = 0;
+        String bestMatch = "";
         for (int i = 0; i < aliases.length; i++) {
-            double aliasPerc = getRelativeDiffPercentage(aliases[i], wish);
-            if (aliasPerc < perc) {
-                aliasN = i;
-                perc = aliasPerc;
+            String alias = aliases[i];
+            if (alias.contains("{playername}")) {
+                for (Player p : getOnlinePlayers()) {
+                    String aliasWPlayerName = alias.replace("{playername}", p.getName().toLowerCase());
+                    double aliasPerc = getRelativeDiffPercentage(aliasWPlayerName, wish);
+                    if (aliasPerc < perc) {
+                        bestMatch = aliasWPlayerName;
+                        perc = aliasPerc;
+                    }
+                }
+            } else {
+                double aliasPerc = getRelativeDiffPercentage(alias, wish);
+                if (aliasPerc < perc) {
+                    bestMatch = alias;
+                    perc = aliasPerc;
+                }
             }
         }
-        return aliases[aliasN];
-    }
-
-    @Deprecated
-    public double getRelativeDifferencePercentage(String wish) {
-        double perc = 2.0;
-        for (int i = 0; i < aliases.length; i++) {
-            double aliasPerc = getRelativeDiffPercentage(aliases[i], wish);
-            if (aliasPerc < perc) {
-                perc = aliasPerc;
-            }
-        }
-        return perc;
+        return bestMatch;
     }
 
     public double getRelativeDiffPercentage(String alias, String wish) {
