@@ -12,6 +12,7 @@ public enum Settings {
     DEBUG("Settings.Debug"),
     DROPRATE_DESERT("Settings.DesertDropRate"),
     DROPRATE_OUTSIDE("Settings.OutsideDropRate"),
+    ANNOUNCE_WISH_FULFILL("Settings.AnnounceWishFulfillmentToEveryone"),
     WORLD_BLACKLIST("Settings.BlacklistedWorlds");
 
     private final String path;

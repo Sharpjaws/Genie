@@ -133,7 +133,7 @@ public class WishManager {
     // TODO Older version support
     public List<PotionEffectType> getPreventedPotions() {
         List<PotionEffectType> prevented = Arrays.asList(new PotionEffectType[]{
-            PotionEffectType.WITHER,
+            PotionEffectType.WITHER, PotionEffectType.HEAL,
             null
         });
         return prevented;

@@ -40,7 +40,7 @@ public class LampItem extends ItemStack {
     }
 
     public static boolean isLampItem(ItemStack item) {
-        if (!item.hasItemMeta()) {
+        if (item == null || !item.hasItemMeta()) {
             return false;
         }
         ItemMeta meta = item.getItemMeta();

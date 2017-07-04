@@ -1,6 +1,7 @@
 package com.djrapitops.genie.listeners;
 
 import com.djrapitops.genie.Genie;
+import com.djrapitops.genie.Settings;
 import com.djrapitops.genie.lamp.Lamp;
 import com.djrapitops.genie.lamp.LampItem;
 import com.djrapitops.genie.lamp.LampManager;
@@ -22,7 +23,6 @@ import org.bukkit.inventory.ItemStack;
 public class ChatListener implements Listener {
 
     private final Genie plugin;
-    
 
     public ChatListener(Genie plugin) {
         this.plugin = plugin;
@@ -30,7 +30,7 @@ public class ChatListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onChat(AsyncPlayerChatEvent event) {
-        Player player = event.getPlayer();        
+        Player player = event.getPlayer();
         if (!plugin.isWorldAllowed(player.getWorld())) {
             return;
         }
@@ -57,9 +57,13 @@ public class ChatListener implements Listener {
                         lampManager.wish(lamp);
                         player.sendMessage(color.getMainColor() + "[Genie] " + color.getSecondColor()
                                 + "You have " + color.getTertiaryColor() + lamp.getWishes() + color.getSecondColor() + " wishes left.");
-                        player.getServer().getOnlinePlayers().forEach(p -> {
-                            p.sendMessage(color.getMainColor() + "[Genie] " + ChatColor.GOLD + "Has fulfilled your wish!");
-                        });
+                        if (plugin.getConfig().getBoolean(Settings.ANNOUNCE_WISH_FULFILL.getPath())) {
+                            player.getServer().getOnlinePlayers().forEach(p -> {
+                                p.sendMessage(color.getMainColor() + "[Genie] " + ChatColor.GOLD + "Has fulfilled your wish!");
+                            });
+                        } else {
+                            player.sendMessage(color.getMainColor() + "[Genie] " + ChatColor.GOLD + "Has fulfilled your wish!");
+                        }
                     } else {
                         player.sendMessage(color.getMainColor() + "[Genie] " + color.getSecondColor() + "Sorry, I do not know how to fulfill your wish");
                         event.setCancelled(true);

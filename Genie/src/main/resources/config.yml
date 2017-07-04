@@ -2,6 +2,7 @@ Settings:
   Debug: false
   DesertDropRate: 1
   OutsideDropRate: 0.15
+  AnnounceWishFulfillmentToEveryone: false
   BlacklistedWorlds:
     - WorldName
 Customization:
