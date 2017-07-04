@@ -73,7 +73,7 @@ public class Genie extends RslPlugin<Genie> {
     }
 
     public static Genie getInstance() {
-        return (Genie) getPluginInstance();
+        return (Genie) getPluginInstance(Genie.class);
     }
 
     public WishLog getWishLog() {

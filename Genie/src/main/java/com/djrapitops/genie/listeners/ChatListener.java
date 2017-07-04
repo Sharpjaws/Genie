@@ -7,6 +7,7 @@ import com.djrapitops.genie.lamp.LampItem;
 import com.djrapitops.genie.lamp.LampManager;
 import com.djrapitops.javaplugin.api.ColorScheme;
 import com.djrapitops.javaplugin.task.RslBukkitRunnable;
+import com.djrapitops.javaplugin.task.RslRunnable;
 import java.util.UUID;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -38,7 +39,7 @@ public class ChatListener implements Listener {
         if (item == null || !LampItem.isLampItem(item)) {
             return;
         }
-        new RslBukkitRunnable<Genie>("Wish Event") {
+        plugin.getRunnableFactory().createNew(new RslRunnable("Wish Event") {
             @Override
             public void run() {
                 try {
@@ -72,7 +73,7 @@ public class ChatListener implements Listener {
                     this.cancel();
                 }
             }
-        }.runTaskAsynchronously();
+        }).runTaskAsynchronously();
     }
 
     private ItemStack getItemInhand(Player player) {

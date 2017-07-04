@@ -13,6 +13,7 @@ import com.djrapitops.genie.wishes.teleport.TeleportToBedWish;
 import com.djrapitops.genie.wishes.teleport.TeleportToWish;
 import com.djrapitops.genie.wishes.world.*;
 import com.djrapitops.javaplugin.task.RslBukkitRunnable;
+import com.djrapitops.javaplugin.task.RslRunnable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -218,7 +219,7 @@ public class WishManager {
             i++;
         }
         if (!matches.isEmpty()) {
-            new RslBukkitRunnable<Genie>("WishFulfillmentTask") {
+            plugin.getRunnableFactory().createNew(new RslRunnable("Wish Fulfillment Task") {
                 @Override
                 public void run() {
                     try {
@@ -229,7 +230,7 @@ public class WishManager {
                         this.cancel();
                     }
                 }
-            }.runTask();
+            }).runTask();
             return true;
         }
         return false;

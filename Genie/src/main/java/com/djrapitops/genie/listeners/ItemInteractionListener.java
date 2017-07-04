@@ -6,6 +6,7 @@ import com.djrapitops.genie.lamp.LampItem;
 import com.djrapitops.genie.lamp.LampManager;
 import com.djrapitops.javaplugin.api.ColorScheme;
 import com.djrapitops.javaplugin.task.RslBukkitRunnable;
+import com.djrapitops.javaplugin.task.RslRunnable;
 import java.util.UUID;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -38,7 +39,7 @@ public class ItemInteractionListener implements Listener {
             return;
         }
         Player player = event.getPlayer();
-        new RslBukkitRunnable<Genie>("Wish Event") {
+        plugin.getRunnableFactory().createNew(new RslRunnable("Lamp Wish Count Check Event") {
             @Override
             public void run() {
                 try {
@@ -59,6 +60,6 @@ public class ItemInteractionListener implements Listener {
                     this.cancel();
                 }
             }
-        }.runTaskAsynchronously();
+        }).runTaskAsynchronously();
     }
 }
