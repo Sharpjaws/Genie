@@ -2,9 +2,6 @@ package com.djrapitops.genie.wishes.mob;
 
 import com.djrapitops.genie.Genie;
 import com.djrapitops.genie.wishes.PlayerSpecificWish;
-import com.djrapitops.genie.wishes.Wish;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;

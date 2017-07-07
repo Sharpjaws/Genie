@@ -31,6 +31,7 @@ public class Genie extends RslPlugin<Genie> {
     private WishConfigSectionHandler wishConfigSectionHandler;
     private WishManager wishManager;
     private List<String> blacklistedWorlds;
+    private Messages msg;
 
     @Override
     public void onEnable() {
@@ -48,6 +49,7 @@ public class Genie extends RslPlugin<Genie> {
         wishConfigSectionHandler = new WishConfigSectionHandler(this);
         wishLog = new WishLog(this);
         wishManager = new WishManager(this);
+        msg = new Messages();
         try {
             LampStorage lampStorage = new LampStorage(this);
             lampManager = new LampManager(this, lampStorage);
@@ -100,5 +102,9 @@ public class Genie extends RslPlugin<Genie> {
 
     public boolean isWorldAllowed(World w) {
         return !blacklistedWorlds.contains(w.getName().toLowerCase());
+    }
+
+    public Messages getMsg() {
+        return msg;
     }
 }
