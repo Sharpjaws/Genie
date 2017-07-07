@@ -3,7 +3,7 @@ package com.djrapitops.genie.wishes.other;
 import com.djrapitops.genie.Genie;
 import com.djrapitops.genie.wishes.Wish;
 import com.djrapitops.javaplugin.api.ColorScheme;
-import com.djrapitops.javaplugin.task.RslRunnable;
+import com.djrapitops.javaplugin.task.runnable.RslRunnable;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
