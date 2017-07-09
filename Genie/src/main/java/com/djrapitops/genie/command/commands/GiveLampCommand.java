@@ -1,16 +1,18 @@
 package com.djrapitops.genie.command.commands;
 
 import com.djrapitops.genie.Genie;
+import com.djrapitops.genie.lamp.LampItem;
 import com.djrapitops.genie.lamp.LampManager;
+import com.djrapitops.genie.utilities.Check;
 import com.djrapitops.javaplugin.command.CommandType;
 import com.djrapitops.javaplugin.command.CommandUtils;
 import com.djrapitops.javaplugin.command.SubCommand;
 import com.djrapitops.javaplugin.command.sender.ISender;
 import com.djrapitops.javaplugin.utilities.UUIDFetcher;
 import java.util.UUID;
-import org.bukkit.entity.Player;
 import static org.bukkit.Bukkit.getPlayer;
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 
 /**
  * Command used to give a player the lamp.
@@ -28,12 +30,25 @@ public class GiveLampCommand extends SubCommand {
 
     @Override
     public boolean onCommand(ISender sender, String commandLabel, String[] args) {
+        final String notFound = ChatColor.RED + "Player not found. (Is the player online? Name is case sensitive!)";
+        final String lampDropped = ChatColor.GREEN + "[Genie] Lamp Dropped!";
+
         LampManager lampManager = plugin.getLampManager();
         Player reciever = getReciever(args, sender);
-        if (reciever == null) {
-            sender.sendMessage(ChatColor.RED + "Player not found. (Is the player online? Name is case sensitive!)");
+
+        if (!Check.isTrue(reciever != null, notFound, sender)) {
             return true;
         }
+
+        int wishes = getWishAmount(args);
+        final LampItem newLamp = lampManager.newLamp(wishes);
+
+        lampManager.dropLamp(reciever.getLocation(), newLamp);
+        sender.sendMessage(lampDropped);
+        return true;
+    }
+
+    private int getWishAmount(String[] args) {
         int wishes = 3;
         for (String arg : args) {
             try {
@@ -42,9 +57,7 @@ public class GiveLampCommand extends SubCommand {
                 // Use 3 if not found.
             }
         }
-        lampManager.dropLamp(reciever.getLocation(), lampManager.newLamp(wishes));
-        sender.sendMessage(ChatColor.GREEN + "[Genie] Lamp Dropped!");
-        return true;
+        return wishes;
     }
 
     private Player getReciever(String[] args, ISender sender) {

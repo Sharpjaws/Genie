@@ -21,7 +21,7 @@ public class FarmWish extends Wish {
 
     @Override
     public boolean fulfillWish(Player p) {
-        new ItemWish(Material.IRON_HOE).fulfillWish(p);        
+        new ItemWish(Material.IRON_HOE).fulfillWish(p);
         return new ItemWish(Material.SEEDS, 64).fulfillWish(p);
     }
 

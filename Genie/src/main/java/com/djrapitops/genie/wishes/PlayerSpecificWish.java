@@ -18,16 +18,16 @@ import org.bukkit.entity.Player;
 public abstract class PlayerSpecificWish extends Wish {
 
     protected Map<UUID, UUID> storage;
-    
+
     public PlayerSpecificWish(String... name) {
         super(name);
         storage = new HashMap<>();
     }
-    
+
     public void placeInStore(UUID player, UUID storedValue) {
         storage.put(player, storedValue);
     }
-    
+
     public void clearFromStore(UUID player) {
         storage.remove(player);
     }

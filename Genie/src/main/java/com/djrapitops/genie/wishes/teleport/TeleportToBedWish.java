@@ -7,7 +7,6 @@ package com.djrapitops.genie.wishes.teleport;
 
 import com.djrapitops.genie.Genie;
 import com.djrapitops.genie.wishes.Wish;
-import java.util.UUID;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 

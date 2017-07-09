@@ -15,7 +15,7 @@ import org.bukkit.potion.PotionEffectType;
  *
  * @author Rsl1122
  */
-public class PotionEffectWish extends Wish{
+public class PotionEffectWish extends Wish {
 
     private final PotionEffectType type;
 
@@ -23,11 +23,11 @@ public class PotionEffectWish extends Wish{
         super(FormatUtils.getPotionNames(type));
         this.type = type;
     }
-    
+
     @Override
     public boolean fulfillWish(Player p) {
-        p.addPotionEffect(new PotionEffect(type, 60*20, 1));
+        p.addPotionEffect(new PotionEffect(type, 60 * 20, 1));
         return true;
     }
-    
+
 }

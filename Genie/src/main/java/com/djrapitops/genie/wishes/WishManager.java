@@ -100,7 +100,7 @@ public class WishManager {
     private void addPotionWishes(List<Wish> toAdd) {
         List<PotionEffectType> prevented = getPreventedPotions();
         for (PotionEffectType potion : PotionEffectType.values()) {
-            if (!Verify.notNull(potion)) {
+            if (potion == null) {
                 continue;
             }
             if (!Verify.contains(potion, prevented)) {

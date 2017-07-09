@@ -28,8 +28,7 @@ public class WishLog {
     }
 
     public void madeAWish(Player p, String wish) {
-        String timeStamp = "[" + FormattingUtils.formatTimeStampSecond(BenchmarkUtil.getTime()) + "] ";
-        plugin.getPluginLogger().toLog(timeStamp + " " + p.getName() + ": " + wish, "Wishlog.txt");
+        plugin.getPluginLogger().toLog(p.getName() + ": " + wish, "Wishlog.txt");
     }
 
     public List<String> getWishesBy(String playername) throws IOException {

@@ -23,7 +23,7 @@ public class FlyingWish extends Wish {
         boolean allowFlightPrior = p.getAllowFlight();
         p.setAllowFlight(true);
         p.setFlying(true);
-        p.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 60*20, 0));
+        p.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 60 * 20, 0));
         ColorScheme color = Genie.getInstance().getColorScheme();
         p.sendMessage(color.getMainColor() + "[Genie] " + color.getSecondColor() + "You have been granted the ability to fly for 1 minute");
         Genie.getInstance().getRunnableFactory().createNew(new RslRunnable("EndFlyTask") {
