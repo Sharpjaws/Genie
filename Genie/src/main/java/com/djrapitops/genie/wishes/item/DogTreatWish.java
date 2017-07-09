@@ -16,7 +16,7 @@ import org.bukkit.entity.Player;
 public class DogTreatWish extends Wish {
 
     public DogTreatWish() {
-        super("heal, dog", "feed, dog", "help, dog", "like, dog", "dog, treat", "dogtreat");
+        super("heal, dog", "feed, dog", "help, dog", "like, dog", "dog, treat", "dogtreat", "dog, treats", "dogtreats");
     }
 
     @Override

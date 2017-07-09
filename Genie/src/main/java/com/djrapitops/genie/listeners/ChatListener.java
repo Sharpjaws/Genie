@@ -1,12 +1,14 @@
 package com.djrapitops.genie.listeners;
 
 import com.djrapitops.genie.Genie;
+import com.djrapitops.genie.MessageType;
+import com.djrapitops.genie.Messages;
 import com.djrapitops.genie.Settings;
 import com.djrapitops.genie.lamp.Lamp;
 import com.djrapitops.genie.lamp.LampItem;
 import com.djrapitops.genie.lamp.LampManager;
 import com.djrapitops.javaplugin.api.ColorScheme;
-import com.djrapitops.javaplugin.task.RslBukkitRunnable;
+import com.djrapitops.javaplugin.task.runnable.RslRunnable;
 import java.util.UUID;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -38,7 +40,7 @@ public class ChatListener implements Listener {
         if (item == null || !LampItem.isLampItem(item)) {
             return;
         }
-        new RslBukkitRunnable<Genie>("Wish Event") {
+        plugin.getRunnableFactory().createNew(new RslRunnable("Wish Event") {
             @Override
             public void run() {
                 try {
@@ -47,32 +49,35 @@ public class ChatListener implements Listener {
                     UUID lampUUID = LampItem.getLampUUID(lampIDLine);
                     LampManager lampManager = plugin.getLampManager();
                     Lamp lamp = lampManager.getLamp(lampUUID);
+                    Messages msg = plugin.getMsg();
+                    String prefix = color.getMainColor() + "[Genie] " + color.getSecondColor();
                     if (!lamp.hasWishesLeft()) {
-                        player.sendMessage(color.getMainColor() + "[Genie] " + color.getSecondColor() + "This lamp has no wishes left.");
+                        player.sendMessage(prefix + msg.getMessage(MessageType.OUT_OF_WISHES));
                         return;
                     }
                     String message = event.getMessage().toLowerCase();
 
                     if (makeAWish(player, message)) {
                         lampManager.wish(lamp);
-                        player.sendMessage(color.getMainColor() + "[Genie] " + color.getSecondColor()
-                                + "You have " + color.getTertiaryColor() + lamp.getWishes() + color.getSecondColor() + " wishes left.");
+                        String wishesLeft = color.getTertiaryColor() + "" + lamp.getWishes() + color.getSecondColor();
+                        player.sendMessage(prefix + msg.getMessage(MessageType.WISHES_LEFT).replace("WISHES", wishesLeft));
                         if (plugin.getConfig().getBoolean(Settings.ANNOUNCE_WISH_FULFILL.getPath())) {
                             player.getServer().getOnlinePlayers().forEach(p -> {
-                                p.sendMessage(color.getMainColor() + "[Genie] " + ChatColor.GOLD + "Has fulfilled your wish!");
+                                p.sendMessage(color.getMainColor() + "[Genie] " + ChatColor.GOLD + msg.getMessage(MessageType.FULFILL));
                             });
                         } else {
-                            player.sendMessage(color.getMainColor() + "[Genie] " + ChatColor.GOLD + "Has fulfilled your wish!");
+                            player.sendMessage(color.getMainColor() + "[Genie] " + ChatColor.GOLD + plugin.getMsg().getMessage(MessageType.FULFILL));
                         }
                     } else {
-                        player.sendMessage(color.getMainColor() + "[Genie] " + color.getSecondColor() + "Sorry, I do not know how to fulfill your wish");
+                        player.sendMessage(prefix + plugin.getMsg().getMessage(MessageType.CANNOT_FIND));
+                        plugin.getUnfulfilledWishStore().addWish(message);
                         event.setCancelled(true);
                     }
                 } finally {
                     this.cancel();
                 }
             }
-        }.runTaskAsynchronously();
+        }).runTaskAsynchronously();
     }
 
     private ItemStack getItemInhand(Player player) {

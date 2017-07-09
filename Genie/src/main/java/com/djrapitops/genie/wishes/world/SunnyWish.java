@@ -17,7 +17,7 @@ public class SunnyWish extends Wish {
     public SunnyWish() {
         super("Sunny", "Clear", "Not Rain");
     }
-    
+
     @Override
     public boolean fulfillWish(Player p) {
         p.getWorld().setStorm(false);

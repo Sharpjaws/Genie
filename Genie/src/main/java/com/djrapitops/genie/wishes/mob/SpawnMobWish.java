@@ -20,7 +20,7 @@ public class SpawnMobWish extends Wish {
     private final EntityType mobToSpawn;
 
     public SpawnMobWish(EntityType mobToSpawn) {
-        super(FormatUtils.getProperName(mobToSpawn.name()));
+        super(FormatUtils.getMobNames(mobToSpawn));
         this.mobToSpawn = mobToSpawn;
     }
 

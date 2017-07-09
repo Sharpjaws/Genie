@@ -3,7 +3,7 @@ package com.djrapitops.genie.wishes.other;
 import com.djrapitops.genie.Genie;
 import com.djrapitops.genie.wishes.Wish;
 import com.djrapitops.javaplugin.api.ColorScheme;
-import com.djrapitops.javaplugin.task.RslBukkitRunnable;
+import com.djrapitops.javaplugin.task.runnable.RslRunnable;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -23,10 +23,10 @@ public class FlyingWish extends Wish {
         boolean allowFlightPrior = p.getAllowFlight();
         p.setAllowFlight(true);
         p.setFlying(true);
-        p.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 60*20, 0));
+        p.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 60 * 20, 0));
         ColorScheme color = Genie.getInstance().getColorScheme();
         p.sendMessage(color.getMainColor() + "[Genie] " + color.getSecondColor() + "You have been granted the ability to fly for 1 minute");
-        new RslBukkitRunnable<Genie>("EndFlyTask") {
+        Genie.getInstance().getRunnableFactory().createNew(new RslRunnable("EndFlyTask") {
             @Override
             public void run() {
                 this.cancel();
@@ -39,7 +39,7 @@ public class FlyingWish extends Wish {
                 p.setAllowFlight(allowFlightPrior);
                 super.cancel();
             }
-        }.runTaskLater(20 * 60);
+        }).runTaskLater(20 * 60);
         return true;
     }
 

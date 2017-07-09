@@ -1,4 +1,3 @@
-
 package com.djrapitops.genie.wishes.mob;
 
 import com.djrapitops.genie.wishes.Wish;

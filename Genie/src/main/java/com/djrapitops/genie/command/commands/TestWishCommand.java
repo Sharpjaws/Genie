@@ -4,15 +4,10 @@ import com.djrapitops.genie.Genie;
 import com.djrapitops.genie.wishes.Wish;
 import com.djrapitops.javaplugin.api.ColorScheme;
 import com.djrapitops.javaplugin.command.CommandType;
-import com.djrapitops.javaplugin.command.CommandUtils;
 import com.djrapitops.javaplugin.command.SubCommand;
 import com.djrapitops.javaplugin.command.sender.ISender;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Optional;
-import static org.bukkit.Bukkit.getOnlinePlayers;
 import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
 
 /**
  * Command used to test a wish.
@@ -30,13 +25,18 @@ public class TestWishCommand extends SubCommand {
 
     @Override
     public boolean onCommand(ISender sender, String commandLabel, String[] args) {
+        ColorScheme color = plugin.getColorScheme();
+        final ChatColor mColor = color.getMainColor();
+        final ChatColor sColor = color.getSecondColor();
+        final String prefix = mColor + "[Genie] " + sColor;
+
         String wish = getWish(args);
         Wish matchingWish = plugin.getWishManager().getMatchingWish(wish, null);
-        ColorScheme color = plugin.getColorScheme();
+
         if (matchingWish == null) {
-            sender.sendMessage(color.getMainColor() + "[Genie] " + color.getSecondColor() + "Did not match any wish.");
+            sender.sendMessage(prefix + "Did not match any wish.");
         } else {
-            sender.sendMessage(color.getMainColor() + "[Genie] " + color.getSecondColor() + "Matching wish: " + Arrays.toString(matchingWish.getAliases()));
+            sender.sendMessage(prefix + "Matching wish: " + Arrays.toString(matchingWish.getAliases()));
         }
         return true;
     }

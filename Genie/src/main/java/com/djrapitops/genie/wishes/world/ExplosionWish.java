@@ -19,7 +19,7 @@ public class ExplosionWish extends Wish {
     public ExplosionWish() {
         super("Explosion", "Blow up", "Explode", "Boom", "Crater", "Exploded");
     }
-    
+
     @Override
     public boolean fulfillWish(Player p) {
         Location loc = p.getLocation();

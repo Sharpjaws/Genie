@@ -25,6 +25,10 @@ public class LampStorage extends ConfigFile {
     public LampStorage(Genie plugin) throws IOException, InvalidConfigurationException {
         super(getStorageFolder(plugin), "lamps");
         FileConfiguration config = getConfig();
+        copyDefaults(config);
+    }
+
+    private void copyDefaults(FileConfiguration config) throws IOException {
         HashMap<String, Serializable> map = new HashMap<>();
         map.put(UUID.randomUUID().toString(), new HashMap<>());
         config.addDefault("Lamps", map);
@@ -42,15 +46,19 @@ public class LampStorage extends ConfigFile {
         try {
             FileConfiguration config = getConfig();
             ConfigurationSection lampsC = config.getConfigurationSection("Lamps");
+            
             Map<String, Serializable> values = new HashMap<>();
             values.put("wishes", lamp.getWishes());
+            
             String lampIDString = lamp.getLampID().toString();
+            
             if (lampsC == null) {
                 config.set("Lamps." + lampIDString, values);
             } else {
                 lampsC.set(lampIDString, values);
                 config.set("Lamps", lampsC);
             }
+            
             save();
         } catch (IOException ex) {
             Log.toLog(this.getClass().getName(), ex);
@@ -61,6 +69,7 @@ public class LampStorage extends ConfigFile {
         FileConfiguration config = getConfig();
         ConfigurationSection lampsC = config.getConfigurationSection("Lamps");
         Map<UUID, Lamp> lamps = new HashMap<>();
+        
         if (lampsC != null) {
             Set<String> keys = lampsC.getKeys(false);
             for (String key : keys) {
@@ -69,6 +78,7 @@ public class LampStorage extends ConfigFile {
                 lamps.put(lampId, new Lamp(lampId, wishes));
             }
         }
+        
         return lamps;
     }
 

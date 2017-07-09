@@ -12,9 +12,10 @@ import com.djrapitops.genie.wishes.teleport.TeleportHereWish;
 import com.djrapitops.genie.wishes.teleport.TeleportToBedWish;
 import com.djrapitops.genie.wishes.teleport.TeleportToWish;
 import com.djrapitops.genie.wishes.world.*;
-import com.djrapitops.javaplugin.task.RslBukkitRunnable;
+import com.djrapitops.javaplugin.task.runnable.RslRunnable;
+import com.djrapitops.javaplugin.utilities.Verify;
+import com.djrapitops.javaplugin.utilities.compatibility.EnumUtility;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -98,18 +99,20 @@ public class WishManager {
 
     private void addPotionWishes(List<Wish> toAdd) {
         List<PotionEffectType> prevented = getPreventedPotions();
-        for (PotionEffectType type : PotionEffectType.values()) {
-            if (prevented.contains(type)) {
+        for (PotionEffectType potion : PotionEffectType.values()) {
+            if (potion == null) {
                 continue;
             }
-            toAdd.add(new PotionEffectWish(type));
+            if (!Verify.contains(potion, prevented)) {
+                toAdd.add(new PotionEffectWish(potion));
+            }
         }
     }
 
     private void addItemWishes(List<Wish> toAdd) {
         List<Material> preventedMats = getPreventedItems();
         for (Material material : Material.values()) {
-            if (!preventedMats.contains(material)) {
+            if (!Verify.contains(material, preventedMats)) {
                 toAdd.add(new ItemWish(material));
             }
         }
@@ -118,7 +121,7 @@ public class WishManager {
     private List<Wish> addMobWishes(List<Wish> toAdd) {
         List<EntityType> prevented = getPreventedEntities();
         for (EntityType mob : EntityType.values()) {
-            if (!prevented.contains(mob)) {
+            if (!Verify.contains(mob, prevented)) {
                 toAdd.add(new SpawnMobWish(mob));
             }
             for (EntityType stackMob : EntityType.values()) {
@@ -132,58 +135,55 @@ public class WishManager {
 
     // TODO Older version support
     public List<PotionEffectType> getPreventedPotions() {
-        List<PotionEffectType> prevented = Arrays.asList(new PotionEffectType[]{
-            PotionEffectType.WITHER, PotionEffectType.HEAL,
-            null
-        });
+        List<PotionEffectType> prevented = EnumUtility.getSupportedEnumValues(PotionEffectType.class,
+                "WITHER", "HEAL"
+        );
         return prevented;
     }
 
     // TODO Older version support
     public List<EntityType> getPreventedEntities() {
-        List<EntityType> prevented = Arrays.asList(new EntityType[]{
-            EntityType.AREA_EFFECT_CLOUD, EntityType.ARMOR_STAND, EntityType.COMPLEX_PART,
-            EntityType.DRAGON_FIREBALL, EntityType.DROPPED_ITEM, EntityType.EGG,
-            EntityType.ENDER_PEARL, EntityType.ENDER_SIGNAL, EntityType.EXPERIENCE_ORB,
-            EntityType.FALLING_BLOCK, EntityType.FIREBALL, EntityType.FIREWORK,
-            EntityType.FISHING_HOOK, EntityType.EVOKER_FANGS, EntityType.ITEM_FRAME,
-            EntityType.LEASH_HITCH, EntityType.LIGHTNING, EntityType.LINGERING_POTION,
-            EntityType.LLAMA_SPIT, EntityType.MINECART, EntityType.MINECART_CHEST,
-            EntityType.MINECART_COMMAND, EntityType.MINECART_FURNACE, EntityType.MINECART_HOPPER,
-            EntityType.MINECART_MOB_SPAWNER, EntityType.MINECART_TNT, EntityType.PAINTING,
-            EntityType.PLAYER, EntityType.PRIMED_TNT, EntityType.SHULKER_BULLET,
-            EntityType.THROWN_EXP_BOTTLE, EntityType.TIPPED_ARROW, EntityType.UNKNOWN,
-            EntityType.WEATHER, EntityType.WITHER_SKULL, EntityType.ARROW, EntityType.BOAT,
-            EntityType.SPLASH_POTION, EntityType.SMALL_FIREBALL, EntityType.ENDER_DRAGON,
-            null
-        });
+        List<EntityType> prevented = EnumUtility.getSupportedEnumValues(EntityType.class,
+                "AREA_EFFECT_CLOUD", "ARMOR_STAND", "COMPLEX_PART",
+                "DRAGON_FIREBALL", "DROPPED_ITEM", "EGG",
+                "ENDER_PEARL", "ENDER_SIGNAL", "EXPERIENCE_ORB",
+                "FALLING_BLOCK", "FIREBALL", "FIREWORK",
+                "FISHING_HOOK", "EVOKER_FANGS", "ITEM_FRAME",
+                "LEASH_HITCH", "LIGHTNING", "LINGERING_POTION",
+                "LLAMA_SPIT", "MINECART", "MINECART_CHEST",
+                "MINECART_COMMAND", "MINECART_FURNACE", "MINECART_HOPPER",
+                "MINECART_MOB_SPAWNER", "MINECART_TNT", "PAINTING",
+                "PLAYER", "PRIMED_TNT", "SHULKER_BULLET",
+                "THROWN_EXP_BOTTLE", "TIPPED_ARROW", "UNKNOWN",
+                "WEATHER", "WITHER_SKULL", "ARROW", "BOAT",
+                "SPLASH_POTION", "SMALL_FIREBALL", "ENDER_DRAGON"
+        );
         return prevented;
     }
 
     // TODO Older version support
     public List<Material> getPreventedItems() {
-        List<Material> prevented = Arrays.asList(new Material[]{
-            Material.ACACIA_DOOR, Material.BEDROCK, Material.AIR,
-            Material.BED_BLOCK, Material.BEETROOT_BLOCK, Material.BIRCH_DOOR,
-            Material.BREWING_STAND, Material.BURNING_FURNACE, Material.CAKE_BLOCK,
-            Material.CARROT, Material.COMMAND, Material.CAULDRON,
-            Material.COMMAND, Material.COMMAND_CHAIN, Material.COMMAND_REPEATING,
-            Material.COMMAND_MINECART, Material.DIODE_BLOCK_ON, Material.DARK_OAK_DOOR,
-            Material.DAYLIGHT_DETECTOR_INVERTED, Material.DIODE_BLOCK_ON, Material.DIODE_BLOCK_OFF,
-            Material.DOUBLE_PLANT, Material.DOUBLE_STONE_SLAB2, Material.EMPTY_MAP,
-            Material.ENDER_PORTAL, Material.ENDER_PORTAL_FRAME, Material.FIREWORK_CHARGE,
-            Material.FLOWER_POT, Material.HUGE_MUSHROOM_1, Material.HUGE_MUSHROOM_2,
-            Material.IRON_DOOR_BLOCK, Material.JUNGLE_DOOR, Material.KNOWLEDGE_BOOK,
-            Material.MONSTER_EGG, Material.MONSTER_EGGS, Material.PISTON_BASE,
-            Material.PISTON_EXTENSION, Material.PISTON_MOVING_PIECE, Material.PISTON_STICKY_BASE,
-            Material.REDSTONE_COMPARATOR_OFF, Material.REDSTONE_LAMP_ON, Material.REDSTONE_TORCH_OFF,
-            Material.SIGN_POST, Material.SKULL, Material.SKULL_ITEM,
-            Material.SNOW, Material.SPRUCE_DOOR, Material.SUGAR_CANE_BLOCK,
-            Material.STRUCTURE_BLOCK, Material.STRUCTURE_VOID, Material.STANDING_BANNER,
-            Material.STATIONARY_WATER, Material.STATIONARY_LAVA, Material.TIPPED_ARROW,
-            Material.TRIPWIRE, Material.WALL_SIGN, Material.WATER, Material.WATER_LILY,
-            Material.LAVA, Material.WRITTEN_BOOK, Material.WALL_BANNER, Material.POTATO,
-            null});
+        List<Material> prevented = EnumUtility.getSupportedEnumValues(Material.class,
+                "ACACIA_DOOR", "BEDROCK", "AIR",
+                "BED_BLOCK", "BEETROOT_BLOCK", "BIRCH_DOOR",
+                "BREWING_STAND", "BURNING_FURNACE", "CAKE_BLOCK",
+                "CARROT", "COMMAND", "CAULDRON",
+                "COMMAND", "COMMAND_CHAIN", "COMMAND_REPEATING",
+                "COMMAND_MINECART", "DIODE_BLOCK_ON", "DARK_OAK_DOOR",
+                "DAYLIGHT_DETECTOR_INVERTED", "DIODE_BLOCK_ON", "DIODE_BLOCK_OFF",
+                "DOUBLE_PLANT", "DOUBLE_STONE_SLAB2", "EMPTY_MAP",
+                "ENDER_PORTAL", "ENDER_PORTAL_FRAME", "FIREWORK_CHARGE",
+                "FLOWER_POT", "HUGE_MUSHROOM_1", "HUGE_MUSHROOM_2",
+                "IRON_DOOR_BLOCK", "JUNGLE_DOOR", "KNOWLEDGE_BOOK",
+                "MONSTER_EGG", "MONSTER_EGGS", "PISTON_BASE",
+                "PISTON_EXTENSION", "PISTON_MOVING_PIECE", "PISTON_STICKY_BASE",
+                "REDSTONE_COMPARATOR_OFF", "REDSTONE_LAMP_ON", "REDSTONE_TORCH_OFF",
+                "SIGN_POST", "SKULL", "SKULL_ITEM",
+                "SNOW", "SPRUCE_DOOR", "SUGAR_CANE_BLOCK",
+                "STRUCTURE_BLOCK", "STRUCTURE_VOID", "STANDING_BANNER",
+                "STATIONARY_WATER", "STATIONARY_LAVA", "TIPPED_ARROW",
+                "TRIPWIRE", "WALL_SIGN", "WATER", "WATER_LILY",
+                "LAVA", "WRITTEN_BOOK", "WALL_BANNER", "POTATO");
         return prevented;
     }
 
@@ -218,7 +218,7 @@ public class WishManager {
             i++;
         }
         if (!matches.isEmpty()) {
-            new RslBukkitRunnable<Genie>("WishFulfillmentTask") {
+            plugin.getRunnableFactory().createNew(new RslRunnable("Wish Fulfillment Task") {
                 @Override
                 public void run() {
                     try {
@@ -229,7 +229,7 @@ public class WishManager {
                         this.cancel();
                     }
                 }
-            }.runTask();
+            }).runTask();
             return true;
         }
         return false;

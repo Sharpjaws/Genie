@@ -16,7 +16,7 @@ public class Log {
      * @param message "Message" will show up as [INFO][Plan]: Message
      */
     public static void info(String message) {
-        Genie.getPluginInstance().getPluginLogger().info(message);
+        Genie.getInstance().getPluginLogger().info(message);
     }
 
     /**
