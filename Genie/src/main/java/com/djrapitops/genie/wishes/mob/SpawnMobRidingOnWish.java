@@ -25,12 +25,12 @@ public class SpawnMobRidingOnWish extends Wish {
     private final EntityType mobToStack;
 
     public SpawnMobRidingOnWish(EntityType mobToSpawn, EntityType mobToStack) {
-        super(getProperMobnames(mobToStack.name(), mobToSpawn.name()));
+        super(getProperMobNames(mobToStack.name(), mobToSpawn.name()));
         this.mobToSpawn = mobToSpawn;
         this.mobToStack = mobToStack;
     }
 
-    private static String[] getProperMobnames(String mobName, String stackMobName) {
+    private static String[] getProperMobNames(String mobName, String stackMobName) {
         String[] first = FormatUtils.getProperName(mobName);
         String[] second = FormatUtils.getProperName(stackMobName);
         List<String> names = new ArrayList<>();
@@ -48,7 +48,7 @@ public class SpawnMobRidingOnWish extends Wish {
         Location aboveHead = p.getLocation().add(new Location(p.getWorld(), 0, 2, 0));
         Entity spawned = p.getWorld().spawnEntity(aboveHead, mobToSpawn);
         Entity toStack = p.getWorld().spawnEntity(aboveHead, mobToStack);
-        ((LivingEntity) spawned).addPassenger(toStack);
+        spawned.addPassenger(toStack);
         return true;
     }
 }

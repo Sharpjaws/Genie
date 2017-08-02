@@ -1,6 +1,7 @@
 package com.djrapitops.genie.wishes;
 
 import static org.bukkit.Bukkit.getOnlinePlayers;
+
 import org.bukkit.entity.Player;
 
 /**
@@ -32,8 +33,7 @@ public abstract class Wish {
     public String getBestMatch(String wish) {
         double perc = 2.0;
         String bestMatch = "";
-        for (int i = 0; i < aliases.length; i++) {
-            String alias = aliases[i];
+        for (String alias : aliases) {
             if (alias.contains("{playername}")) {
                 for (Player p : getOnlinePlayers()) {
                     String aliasWPlayerName = alias.replace("{playername}", p.getName().toLowerCase());
@@ -62,7 +62,6 @@ public abstract class Wish {
         }
         removed = removed.replace(" ", "");
         int remaining = removed.length();
-        double aliasPerc = remaining * 1.0 / alias.replace(", ", "").length();
-        return aliasPerc;
+        return remaining * 1.0 / alias.replace(", ", "").length();
     }
 }

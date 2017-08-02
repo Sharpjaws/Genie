@@ -125,8 +125,7 @@ public class FormatUtils {
                 break;
         }
         try {
-            int i = Integer.parseInt(level);
-            return i;
+            return Integer.parseInt(level);
         } catch (NumberFormatException e) {
             return 1;
         }

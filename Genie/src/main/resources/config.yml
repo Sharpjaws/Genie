@@ -6,5 +6,8 @@ Settings:
   BlacklistedWorlds:
     - WorldName
 Customization:
+  CommandWishes:
+    - /home {playername} | I wish to get home, I wish to be safe
+    - /broadcast example | I want an example
   Wishes:
     DefaultWish: false

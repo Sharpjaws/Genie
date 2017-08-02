@@ -11,10 +11,10 @@ import org.bukkit.entity.Player;
  *
  * @author Rsl1122
  */
-public class AssasinWish extends PlayerSpecificWish {
+public class AssassinWish extends PlayerSpecificWish {
 
-    public AssasinWish() {
-        super("Kill, {playername}", "Assasinate, {playername}", "Destroy, {playername}", "");
+    public AssassinWish() {
+        super("Kill, {playername}", "Assasinate, {playername}", "Assassinate, {playername}", "Destroy, {playername}", "");
     }
 
     @Override

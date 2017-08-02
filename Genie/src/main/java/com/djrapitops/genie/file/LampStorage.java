@@ -3,7 +3,7 @@ package com.djrapitops.genie.file;
 import com.djrapitops.genie.Genie;
 import com.djrapitops.genie.Log;
 import com.djrapitops.genie.lamp.Lamp;
-import com.djrapitops.javaplugin.config.ConfigFile;
+import com.djrapitops.plugin.config.BukkitConfig;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
@@ -20,7 +20,7 @@ import org.bukkit.configuration.file.FileConfiguration;
  *
  * @author Rsl1122
  */
-public class LampStorage extends ConfigFile {
+public class LampStorage extends BukkitConfig {
 
     public LampStorage(Genie plugin) throws IOException, InvalidConfigurationException {
         super(getStorageFolder(plugin), "lamps");

@@ -2,6 +2,7 @@ package com.djrapitops.genie.wishes;
 
 import com.djrapitops.genie.Genie;
 import com.djrapitops.genie.Log;
+import com.djrapitops.genie.Settings;
 import com.djrapitops.genie.file.WishConfigSectionHandler;
 import com.djrapitops.genie.file.WishLog;
 import com.djrapitops.genie.wishes.item.*;
@@ -12,22 +13,18 @@ import com.djrapitops.genie.wishes.teleport.TeleportHereWish;
 import com.djrapitops.genie.wishes.teleport.TeleportToBedWish;
 import com.djrapitops.genie.wishes.teleport.TeleportToWish;
 import com.djrapitops.genie.wishes.world.*;
-import com.djrapitops.javaplugin.task.runnable.RslRunnable;
-import com.djrapitops.javaplugin.utilities.Verify;
-import com.djrapitops.javaplugin.utilities.compatibility.EnumUtility;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import com.djrapitops.plugin.task.AbsRunnable;
+import com.djrapitops.plugin.utilities.Verify;
+import com.djrapitops.plugin.utilities.version.EnumUtility;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffectType;
 
+import java.util.*;
+
 /**
- *
  * @author Rsl1122
  */
 public class WishManager {
@@ -38,7 +35,6 @@ public class WishManager {
     private final WishConfigSectionHandler configSection;
 
     /**
-     *
      * @param plugin
      */
     public WishManager(Genie plugin) {
@@ -54,6 +50,7 @@ public class WishManager {
         addMobWishes(toAdd);
         addItemWishes(toAdd);
         addPotionWishes(toAdd);
+        addCommandWishes(toAdd);
         // addEnchantWishes(toAdd); // Can't combine unsafe books in an anvil
         toAdd.add(new AnimalWish());
         toAdd.add(new FarmWish());
@@ -73,16 +70,44 @@ public class WishManager {
         toAdd.add(new TeleportHereWish());
         toAdd.add(new TeleportToBedWish());
         toAdd.add(new TeleportToWish());
-        toAdd.add(new AssasinWish());
+        toAdd.add(new AssassinWish());
         toAdd.add(new FlyingWish());
         toAdd.add(new DayWish());
         toAdd.add(new NightWish());
-        Collections.sort(toAdd, new WishComparator());
+        toAdd.sort(new WishComparator());
         for (Wish wish : toAdd) {
             addWish(wish);
         }
         Log.info("Initialized with " + wishes.size() + " wishes");
         plugin.processStatus().setStatus("Wishes", wishes.size() + "");
+    }
+
+    private void addCommandWishes(List<Wish> toAdd) {
+        List<String> customLines = plugin.getConfig().getStringList(Settings.COMMAND_LIST.getPath());
+        if (Verify.isEmpty(customLines)) {
+            return;
+        }
+        Map<String, String[]> commands = new HashMap<>();
+        for (String customLine : customLines) {
+            String[] parts = customLine.split(" \\| ");
+            if (parts.length < 2) {
+                Log.error("Incorrectly formatted command wish: " + customLine);
+                Log.info("Correct format: /command | wish1, wish2, wish3, etc");
+                continue;
+            }
+            String cmd = parts[0].substring(1).trim();
+            String aliasList = parts[1];
+            String[] aliases = aliasList.split(",");
+            for (int i = 0; i < aliases.length; i++) {
+                aliases[i] = removeCommonWords(aliases[i].toLowerCase().trim());
+            }
+            Log.debug("Custom Command Wish: " + cmd + ": " + Arrays.toString(aliases));
+            if (cmd.contains("{playername}")) {
+                toAdd.add(new PlayerSpecificCommandWish(plugin, cmd, aliases));
+            } else {
+                toAdd.add(new BasicCommandWish(plugin, cmd, aliases));
+            }
+        }
     }
 
     // Can't combine unsafe books in an anvil
@@ -118,7 +143,7 @@ public class WishManager {
         }
     }
 
-    private List<Wish> addMobWishes(List<Wish> toAdd) {
+    private void addMobWishes(List<Wish> toAdd) {
         List<EntityType> prevented = getPreventedEntities();
         for (EntityType mob : EntityType.values()) {
             if (!Verify.contains(mob, prevented)) {
@@ -130,20 +155,16 @@ public class WishManager {
                 }
             }
         }
-        return toAdd;
     }
 
-    // TODO Older version support
     public List<PotionEffectType> getPreventedPotions() {
-        List<PotionEffectType> prevented = EnumUtility.getSupportedEnumValues(PotionEffectType.class,
+        return EnumUtility.getSupportedEnumValues(PotionEffectType.class,
                 "WITHER", "HEAL"
         );
-        return prevented;
     }
 
-    // TODO Older version support
     public List<EntityType> getPreventedEntities() {
-        List<EntityType> prevented = EnumUtility.getSupportedEnumValues(EntityType.class,
+        return EnumUtility.getSupportedEnumValues(EntityType.class,
                 "AREA_EFFECT_CLOUD", "ARMOR_STAND", "COMPLEX_PART",
                 "DRAGON_FIREBALL", "DROPPED_ITEM", "EGG",
                 "ENDER_PEARL", "ENDER_SIGNAL", "EXPERIENCE_ORB",
@@ -158,12 +179,10 @@ public class WishManager {
                 "WEATHER", "WITHER_SKULL", "ARROW", "BOAT",
                 "SPLASH_POTION", "SMALL_FIREBALL", "ENDER_DRAGON"
         );
-        return prevented;
     }
 
-    // TODO Older version support
     public List<Material> getPreventedItems() {
-        List<Material> prevented = EnumUtility.getSupportedEnumValues(Material.class,
+        return EnumUtility.getSupportedEnumValues(Material.class,
                 "ACACIA_DOOR", "BEDROCK", "AIR",
                 "BED_BLOCK", "BEETROOT_BLOCK", "BIRCH_DOOR",
                 "BREWING_STAND", "BURNING_FURNACE", "CAKE_BLOCK",
@@ -184,10 +203,9 @@ public class WishManager {
                 "STATIONARY_WATER", "STATIONARY_LAVA", "TIPPED_ARROW",
                 "TRIPWIRE", "WALL_SIGN", "WATER", "WATER_LILY",
                 "LAVA", "WRITTEN_BOOK", "WALL_BANNER", "POTATO");
-        return prevented;
     }
 
-    private void addWish(Wish wish) {
+    public void addWish(Wish wish) {
         if (!configSection.exists(wish)) {
             configSection.createSection(wish);
         }
@@ -197,7 +215,6 @@ public class WishManager {
     }
 
     /**
-     *
      * @param p
      * @param wish
      * @return Could the wish be fulfilled?
@@ -218,7 +235,7 @@ public class WishManager {
             i++;
         }
         if (!matches.isEmpty()) {
-            plugin.getRunnableFactory().createNew(new RslRunnable("Wish Fulfillment Task") {
+            plugin.getRunnableFactory().createNew(new AbsRunnable("Wish Fulfillment Task") {
                 @Override
                 public void run() {
                     try {
@@ -239,7 +256,7 @@ public class WishManager {
         List<Wish> matches = new ArrayList<>(wishes);
 
         String parsedWish = removeCommonWords(wish);
-        Collections.sort(matches, new WishMatchComparator(parsedWish));
+        matches.sort(new WishMatchComparator(parsedWish));
 
         sendDebugMessages(wish, parsedWish, matches);
 
@@ -274,18 +291,18 @@ public class WishManager {
         }
     }
 
-    private String removeCommonWords(String wish) {
+    public String removeCommonWords(String wish) {
         String[] commonWords = new String[]{
-            "i", "you", "him", "her", "a", "the", "had", "wish", "get", "set",
-            "be", "of", "and", "in", "that", "have", "it", "for", "as", "do",
-            "from", "an", "this", "but", "his", "by", "they", "we", "say", "her", "or",
-            "will", "my", "all", "would", "their", "there", "what", "so", "up", "out", "if",
-            "about", "who", "which", "go", "me", "when", "make", "can", "like", "time", "no",
-            "just", "him", "know", "take", "people", "into", "year", "your", "good", "some",
-            "could", "them", "see", "other", "than", "then", "now", "look", "only", /*"come",*/
-            "its", "over", "think", "also", "back", "after", "use", "our", "work", "first",
-            "well", "way", "even", "new", "want", "because", "any", "these", "give", "was",
-            "most", "us"};
+                "i", "you", "him", "her", "a", "the", "had", "wish", "get", "set",
+                "be", "of", "and", "in", "that", "have", "it", "for", "as", "do",
+                "from", "an", "this", "but", "his", "by", "they", "we", "say", "her", "or",
+                "will", "my", "all", "would", "their", "there", "what", "so", "up", "out", "if",
+                "about", "who", "which", "go", "me", "when", "make", "can", "like", "time", "no",
+                "just", "him", "know", "take", "people", "into", "year", "your", "good", "some",
+                "could", "them", "see", "other", "than", "then", "now", "look", "only", /*"come",*/
+                "its", "over", "think", "also", "back", "after", "use", "our", "work", "first",
+                "well", "way", "even", "new", "want", "because", "any", "these", "give", "was",
+                "most", "us"};
         String parsed = wish;
         for (String word : commonWords) {
             parsed = parsed.replace(" " + word + " ", " ");

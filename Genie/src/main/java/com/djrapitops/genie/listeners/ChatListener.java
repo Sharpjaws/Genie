@@ -7,8 +7,8 @@ import com.djrapitops.genie.Settings;
 import com.djrapitops.genie.lamp.Lamp;
 import com.djrapitops.genie.lamp.LampItem;
 import com.djrapitops.genie.lamp.LampManager;
-import com.djrapitops.javaplugin.api.ColorScheme;
-import com.djrapitops.javaplugin.task.runnable.RslRunnable;
+import com.djrapitops.plugin.settings.ColorScheme;
+import com.djrapitops.plugin.task.AbsRunnable;
 import java.util.UUID;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -40,17 +40,22 @@ public class ChatListener implements Listener {
         if (item == null || !LampItem.isLampItem(item)) {
             return;
         }
-        plugin.getRunnableFactory().createNew(new RslRunnable("Wish Event") {
+        plugin.getRunnableFactory().createNew(new AbsRunnable("Wish Event") {
             @Override
             public void run() {
                 try {
                     ColorScheme color = plugin.getColorScheme();
+                    String mCol = color.getMainColor();
+                    String sCol = color.getSecondaryColor();
+                    
                     String lampIDLine = item.getItemMeta().getLore().get(2);
                     UUID lampUUID = LampItem.getLampUUID(lampIDLine);
                     LampManager lampManager = plugin.getLampManager();
                     Lamp lamp = lampManager.getLamp(lampUUID);
                     Messages msg = plugin.getMsg();
-                    String prefix = color.getMainColor() + "[Genie] " + color.getSecondColor();
+                    
+                    
+                    String prefix = mCol + "[Genie] " + sCol;
                     if (!lamp.hasWishesLeft()) {
                         player.sendMessage(prefix + msg.getMessage(MessageType.OUT_OF_WISHES));
                         return;
@@ -59,14 +64,14 @@ public class ChatListener implements Listener {
 
                     if (makeAWish(player, message)) {
                         lampManager.wish(lamp);
-                        String wishesLeft = color.getTertiaryColor() + "" + lamp.getWishes() + color.getSecondColor();
+                        String wishesLeft = color.getTertiaryColor() + "" + lamp.getWishes() + sCol;
                         player.sendMessage(prefix + msg.getMessage(MessageType.WISHES_LEFT).replace("WISHES", wishesLeft));
                         if (plugin.getConfig().getBoolean(Settings.ANNOUNCE_WISH_FULFILL.getPath())) {
                             player.getServer().getOnlinePlayers().forEach(p -> {
-                                p.sendMessage(color.getMainColor() + "[Genie] " + ChatColor.GOLD + msg.getMessage(MessageType.FULFILL));
+                                p.sendMessage(mCol + "[Genie] " + ChatColor.GOLD + msg.getMessage(MessageType.FULFILL));
                             });
                         } else {
-                            player.sendMessage(color.getMainColor() + "[Genie] " + ChatColor.GOLD + plugin.getMsg().getMessage(MessageType.FULFILL));
+                            player.sendMessage(mCol + "[Genie] " + ChatColor.GOLD + plugin.getMsg().getMessage(MessageType.FULFILL));
                         }
                     } else {
                         player.sendMessage(prefix + plugin.getMsg().getMessage(MessageType.CANNOT_FIND));
@@ -80,6 +85,7 @@ public class ChatListener implements Listener {
         }).runTaskAsynchronously();
     }
 
+    @SuppressWarnings("deprecation")
     private ItemStack getItemInhand(Player player) {
         ItemStack item = null;
         try {
@@ -87,7 +93,7 @@ public class ChatListener implements Listener {
         } catch (Throwable e) {
             try {
                 item = player.getInventory().getItemInHand(); // Old version support
-            } catch (Throwable e2) {
+            } catch (Throwable ignored) {
             }
         }
         return item;

@@ -5,12 +5,14 @@ import com.djrapitops.genie.file.*;
 import com.djrapitops.genie.lamp.LampManager;
 import com.djrapitops.genie.listeners.*;
 import com.djrapitops.genie.wishes.WishManager;
-import com.djrapitops.javaplugin.RslPlugin;
-import com.djrapitops.javaplugin.api.ColorScheme;
-import com.djrapitops.javaplugin.utilities.Verify;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import com.djrapitops.plugin.BukkitPlugin;
+import com.djrapitops.plugin.settings.ColorScheme;
+import com.djrapitops.plugin.utilities.Verify;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
@@ -21,8 +23,9 @@ import org.bukkit.configuration.InvalidConfigurationException;
  *
  * @author Rsl1122
  */
-public class Genie extends RslPlugin<Genie> {
+public class Genie extends BukkitPlugin<Genie> {
 
+    private API api;
     private WishLog wishLog;
     private WishManager wishManager;
     private WishConfigSectionHandler wishConfigSectionHandler;
@@ -75,6 +78,8 @@ public class Genie extends RslPlugin<Genie> {
 
         registerCommand(new GenieCommand(this));
 
+        api = new API(this);
+
         processStatus().finishExecution("onEnable");
         Log.info("Plugin Enabled.");
     }
@@ -89,7 +94,7 @@ public class Genie extends RslPlugin<Genie> {
     private void updateWorldBlacklist() {
         String path = Settings.WORLD_BLACKLIST.getPath();
         worldBlacklist = getConfig().getStringList(path).stream()
-                .map(l -> l.toLowerCase())
+                .map(String::toLowerCase)
                 .collect(Collectors.toList());
     }
 
@@ -99,6 +104,10 @@ public class Genie extends RslPlugin<Genie> {
 
     public static Genie getInstance() {
         return (Genie) getPluginInstance(Genie.class);
+    }
+
+    public static API getAPI() {
+        return getInstance().api;
     }
 
     public WishLog getWishLog() {

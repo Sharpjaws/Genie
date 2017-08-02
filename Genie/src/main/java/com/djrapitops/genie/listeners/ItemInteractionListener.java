@@ -6,8 +6,8 @@ import com.djrapitops.genie.Messages;
 import com.djrapitops.genie.lamp.Lamp;
 import com.djrapitops.genie.lamp.LampItem;
 import com.djrapitops.genie.lamp.LampManager;
-import com.djrapitops.javaplugin.api.ColorScheme;
-import com.djrapitops.javaplugin.task.runnable.RslRunnable;
+import com.djrapitops.plugin.settings.ColorScheme;
+import com.djrapitops.plugin.task.AbsRunnable;
 import java.util.UUID;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -40,7 +40,7 @@ public class ItemInteractionListener implements Listener {
             return;
         }
         Player player = event.getPlayer();
-        plugin.getRunnableFactory().createNew(new RslRunnable("Lamp Wish Count Check Event") {
+        plugin.getRunnableFactory().createNew(new AbsRunnable("Lamp Wish Count Check Event") {
             @Override
             public void run() {
                 try {
@@ -50,14 +50,14 @@ public class ItemInteractionListener implements Listener {
                     LampManager lampManager = plugin.getLampManager();
                     Lamp lamp = lampManager.getLamp(lampUUID);
                     Messages msg = plugin.getMsg();
-                    String prefix = color.getMainColor() + "[Genie] " + color.getSecondColor();
+                    String prefix = color.getMainColor() + "[Genie] " + color.getSecondaryColor();
                     if (!lamp.hasWishesLeft()) {
                         player.sendMessage(prefix + msg.getMessage(MessageType.OUT_OF_WISHES));
                         item.getItemMeta().setUnbreakable(false);
                         return;
                     }
                     player.sendMessage(prefix + msg.getMessage(MessageType.SUMMON) + " " + msg.getMessage(MessageType.HELP_WISH));
-                    String wishesLeft = color.getTertiaryColor() + "" + lamp.getWishes() + color.getSecondColor();
+                    String wishesLeft = color.getTertiaryColor() + "" + lamp.getWishes() + color.getSecondaryColor();
                     player.sendMessage(prefix + msg.getMessage(MessageType.WISHES_LEFT).replace("WISHES", wishesLeft));
                 } finally {
                     this.cancel();

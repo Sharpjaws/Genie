@@ -1,10 +1,12 @@
 package com.djrapitops.genie.command;
 
 import com.djrapitops.genie.Genie;
-import com.djrapitops.genie.command.commands.*;
-import com.djrapitops.javaplugin.command.CommandType;
-import com.djrapitops.javaplugin.command.StatusCommand;
-import com.djrapitops.javaplugin.command.TreeCommand;
+import com.djrapitops.genie.command.commands.GiveLampCommand;
+import com.djrapitops.genie.command.commands.TestWishCommand;
+import com.djrapitops.genie.command.commands.WishlogCommand;
+import com.djrapitops.plugin.command.CommandType;
+import com.djrapitops.plugin.command.TreeCommand;
+import com.djrapitops.plugin.command.defaultcmds.StatusCommand;
 
 /**
  * Genie admin command

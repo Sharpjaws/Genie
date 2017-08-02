@@ -13,11 +13,12 @@ public enum Settings {
     DROPRATE_DESERT("Settings.DesertDropRate"),
     DROPRATE_OUTSIDE("Settings.OutsideDropRate"),
     ANNOUNCE_WISH_FULFILL("Settings.AnnounceWishFulfillmentToEveryone"),
-    WORLD_BLACKLIST("Settings.BlacklistedWorlds");
+    WORLD_BLACKLIST("Settings.BlacklistedWorlds"),
+    COMMAND_LIST("Customization.CommandWishes");
 
     private final String path;
 
-    private Settings(String path) {
+    Settings(String path) {
         this.path = path;
     }
 

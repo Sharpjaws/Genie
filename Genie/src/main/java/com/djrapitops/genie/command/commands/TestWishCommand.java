@@ -2,12 +2,11 @@ package com.djrapitops.genie.command.commands;
 
 import com.djrapitops.genie.Genie;
 import com.djrapitops.genie.wishes.Wish;
-import com.djrapitops.javaplugin.api.ColorScheme;
-import com.djrapitops.javaplugin.command.CommandType;
-import com.djrapitops.javaplugin.command.SubCommand;
-import com.djrapitops.javaplugin.command.sender.ISender;
+import com.djrapitops.plugin.command.CommandType;
+import com.djrapitops.plugin.command.ISender;
+import com.djrapitops.plugin.command.SubCommand;
+import com.djrapitops.plugin.settings.ColorScheme;
 import java.util.Arrays;
-import org.bukkit.ChatColor;
 
 /**
  * Command used to test a wish.
@@ -26,8 +25,8 @@ public class TestWishCommand extends SubCommand {
     @Override
     public boolean onCommand(ISender sender, String commandLabel, String[] args) {
         ColorScheme color = plugin.getColorScheme();
-        final ChatColor mColor = color.getMainColor();
-        final ChatColor sColor = color.getSecondColor();
+        final String mColor = color.getMainColor();
+        final String sColor = color.getSecondaryColor();
         final String prefix = mColor + "[Genie] " + sColor;
 
         String wish = getWish(args);

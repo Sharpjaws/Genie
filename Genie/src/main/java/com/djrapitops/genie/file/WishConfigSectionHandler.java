@@ -28,8 +28,7 @@ public class WishConfigSectionHandler {
 
     private ConfigurationSection getWishesSection() {
         FileConfiguration config = plugin.getConfig();
-        ConfigurationSection section = config.getConfigurationSection("Customization.Wishes");
-        return section;
+        return config.getConfigurationSection("Customization.Wishes");
     }
 
     public void createSection(Wish wish) {
