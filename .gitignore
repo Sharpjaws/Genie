@@ -45,4 +45,11 @@ $RECYCLE.BIN/
 Network Trash Folder
 Temporary Items
 .apdisk
+
+#Eclipse
 /Genie/target/
+/Genie/.settings
+/Genie/.classpath
+/Genie/.gitignore
+/.settings
+/.project
