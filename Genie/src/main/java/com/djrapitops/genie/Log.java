@@ -20,7 +20,7 @@ public class Log {
     }
 
     /**
-     * Sends a message to the console with the chatcolors.
+     * Sends a message to the console with the chat colors.
      *
      * @param message Message to send.
      */

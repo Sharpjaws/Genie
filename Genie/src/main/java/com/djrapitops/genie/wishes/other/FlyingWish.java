@@ -2,8 +2,8 @@ package com.djrapitops.genie.wishes.other;
 
 import com.djrapitops.genie.Genie;
 import com.djrapitops.genie.wishes.Wish;
-import com.djrapitops.javaplugin.api.ColorScheme;
-import com.djrapitops.javaplugin.task.runnable.RslRunnable;
+import com.djrapitops.plugin.settings.ColorScheme;
+import com.djrapitops.plugin.task.AbsRunnable;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -25,8 +25,8 @@ public class FlyingWish extends Wish {
         p.setFlying(true);
         p.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 60 * 20, 0));
         ColorScheme color = Genie.getInstance().getColorScheme();
-        p.sendMessage(color.getMainColor() + "[Genie] " + color.getSecondColor() + "You have been granted the ability to fly for 1 minute");
-        Genie.getInstance().getRunnableFactory().createNew(new RslRunnable("EndFlyTask") {
+        p.sendMessage(color.getMainColor() + "[Genie] " + color.getSecondaryColor() + "You have been granted the ability to fly for 1 minute");
+        Genie.getInstance().getRunnableFactory().createNew(new AbsRunnable("EndFlyTask") {
             @Override
             public void run() {
                 this.cancel();
@@ -34,7 +34,7 @@ public class FlyingWish extends Wish {
 
             @Override
             public void cancel() {
-                p.sendMessage(color.getSecondColor() + "The Effect wore off.");
+                p.sendMessage(color.getSecondaryColor() + "The Effect wore off.");
                 p.setFlying(false);
                 p.setAllowFlight(allowFlightPrior);
                 super.cancel();

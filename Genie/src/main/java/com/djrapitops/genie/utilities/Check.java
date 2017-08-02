@@ -1,7 +1,7 @@
 package com.djrapitops.genie.utilities;
 
 import com.djrapitops.genie.Log;
-import com.djrapitops.javaplugin.command.sender.ISender;
+import com.djrapitops.plugin.command.ISender;
 
 /**
  * Class containing static check methods with message sending capabilities if

@@ -39,15 +39,14 @@ public class DeathListener implements Listener {
         if (dead instanceof Player) {
             return;
         }
-        List<EntityType> nonHostiles = Arrays.asList(new EntityType[]{
-            EntityType.BAT, EntityType.CHICKEN, EntityType.COW,
-            EntityType.PIG, EntityType.SHEEP, EntityType.RABBIT,
-            EntityType.HORSE, EntityType.SQUID, EntityType.VILLAGER,
-            EntityType.MUSHROOM_COW, EntityType.POLAR_BEAR, EntityType.SKELETON_HORSE,
-            EntityType.DONKEY, EntityType.WOLF, EntityType.OCELOT,
-            EntityType.MULE, EntityType.LLAMA, EntityType.PARROT,
-            EntityType.IRON_GOLEM, EntityType.SNOWMAN
-        });
+        List<EntityType> nonHostiles = Arrays.asList(
+                EntityType.BAT, EntityType.CHICKEN, EntityType.COW,
+                EntityType.PIG, EntityType.SHEEP, EntityType.RABBIT,
+                EntityType.HORSE, EntityType.SQUID, EntityType.VILLAGER,
+                EntityType.MUSHROOM_COW, EntityType.POLAR_BEAR, EntityType.SKELETON_HORSE,
+                EntityType.DONKEY, EntityType.WOLF, EntityType.OCELOT,
+                EntityType.MULE, EntityType.LLAMA, EntityType.PARROT,
+                EntityType.IRON_GOLEM, EntityType.SNOWMAN);
         if (nonHostiles.contains(dead.getType())) {
             return;
         }

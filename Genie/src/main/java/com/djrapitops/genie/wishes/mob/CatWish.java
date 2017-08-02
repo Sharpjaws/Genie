@@ -18,10 +18,8 @@ public class CatWish extends Wish {
 
     @Override
     public boolean fulfillWish(Player p) {
-        if (!new SpawnMobWish(EntityType.OCELOT).fulfillWish(p)) {
-            return false;
-        }
-        return new ItemWish(Material.RAW_FISH, 20).fulfillWish(p);
+        return new SpawnMobWish(EntityType.OCELOT).fulfillWish(p)
+                && new ItemWish(Material.RAW_FISH, 20).fulfillWish(p);
     }
 
 }

@@ -6,8 +6,6 @@
 package com.djrapitops.genie.file;
 
 import com.djrapitops.genie.Genie;
-import com.djrapitops.javaplugin.utilities.BenchmarkUtil;
-import com.djrapitops.javaplugin.utilities.FormattingUtils;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -31,10 +29,9 @@ public class WishLog {
         plugin.getPluginLogger().toLog(p.getName() + ": " + wish, "Wishlog.txt");
     }
 
-    public List<String> getWishesBy(String playername) throws IOException {
-        List<String> wishes = Files.lines(new File(plugin.getDataFolder(), "Wishlog.txt").toPath())
-                .filter(l -> l.toLowerCase().contains(playername.toLowerCase()))
+    public List<String> getWishesBy(String playerName) throws IOException {
+        return Files.lines(new File(plugin.getDataFolder(), "Wishlog.txt").toPath())
+                .filter(l -> l.toLowerCase().contains(playerName.toLowerCase()))
                 .collect(Collectors.toList());
-        return wishes;
     }
 }

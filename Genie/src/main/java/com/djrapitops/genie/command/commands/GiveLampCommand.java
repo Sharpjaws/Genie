@@ -4,11 +4,11 @@ import com.djrapitops.genie.Genie;
 import com.djrapitops.genie.lamp.LampItem;
 import com.djrapitops.genie.lamp.LampManager;
 import com.djrapitops.genie.utilities.Check;
-import com.djrapitops.javaplugin.command.CommandType;
-import com.djrapitops.javaplugin.command.CommandUtils;
-import com.djrapitops.javaplugin.command.SubCommand;
-import com.djrapitops.javaplugin.command.sender.ISender;
-import com.djrapitops.javaplugin.utilities.UUIDFetcher;
+import com.djrapitops.plugin.command.CommandType;
+import com.djrapitops.plugin.command.CommandUtils;
+import com.djrapitops.plugin.command.ISender;
+import com.djrapitops.plugin.command.SubCommand;
+import com.djrapitops.plugin.utilities.player.UUIDFetcher;
 import java.util.UUID;
 import static org.bukkit.Bukkit.getPlayer;
 import org.bukkit.ChatColor;
@@ -68,7 +68,7 @@ public class GiveLampCommand extends SubCommand {
             UUID uuid = null;
             try {
                 uuid = UUIDFetcher.getUUIDOf(args[0]);
-            } catch (Exception ex) {
+            } catch (Exception ignored) {
             }
             if (uuid == null) {
                 if (CommandUtils.isPlayer(sender)) {

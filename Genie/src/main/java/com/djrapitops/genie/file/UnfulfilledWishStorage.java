@@ -2,8 +2,7 @@ package com.djrapitops.genie.file;
 
 import com.djrapitops.genie.Genie;
 import com.djrapitops.genie.Log;
-import com.djrapitops.javaplugin.config.ConfigFile;
-import com.djrapitops.javaplugin.utilities.Verify;
+import com.djrapitops.plugin.config.BukkitConfig;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -16,7 +15,7 @@ import org.bukkit.configuration.file.FileConfiguration;
  *
  * @author Rsl1122
  */
-public class UnfulfilledWishStorage extends ConfigFile {
+public class UnfulfilledWishStorage extends BukkitConfig {
 
     private final List<String> wishes;
 
