@@ -41,7 +41,7 @@ public class DeathListener implements Listener {
             return;
         }
      
-        if (wm.getPreventedEntities().contains(dead.getType())) {
+        if (wm.getPreventedEntities().contains(dead.getType())|| wm.getNonHostileEntities().contains(dead.getType())) {
             return;
         }
         Location loc = dead.getLocation();
