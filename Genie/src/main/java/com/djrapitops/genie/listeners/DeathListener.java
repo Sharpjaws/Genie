@@ -16,8 +16,8 @@ import org.bukkit.event.entity.EntityDeathEvent;
 
 import com.djrapitops.genie.Genie;
 import com.djrapitops.genie.Settings;
-import com.djrapitops.genie.enums.NonHostileMob;
 import com.djrapitops.genie.lamp.LampManager;
+import com.djrapitops.genie.wishes.WishManager;
 
 /**
  *
@@ -27,8 +27,9 @@ public class DeathListener implements Listener {
 
     private final Genie plugin;
     private Map<Location, Integer> recentDrops;
-
+    private WishManager wm;
     public DeathListener(Genie plugin) {
+    	wm = new WishManager(plugin);
         this.plugin = plugin;
         recentDrops = new HashMap<>();
     }
@@ -40,7 +41,7 @@ public class DeathListener implements Listener {
             return;
         }
      
-        if (NonHostileMob.contains(dead.getType())) {
+        if (wm.getPreventedEntities().contains(dead.getType())) {
             return;
         }
         Location loc = dead.getLocation();
