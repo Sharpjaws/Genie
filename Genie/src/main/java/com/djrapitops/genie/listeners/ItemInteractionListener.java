@@ -41,7 +41,8 @@ public class ItemInteractionListener implements Listener {
         }
         Player player = event.getPlayer();
         plugin.getRunnableFactory().createNew(new AbsRunnable("Lamp Wish Count Check Event") {
-            @Override
+            @SuppressWarnings("deprecation")
+			@Override
             public void run() {
                 try {
                     ColorScheme color = plugin.getColorScheme();
@@ -53,7 +54,11 @@ public class ItemInteractionListener implements Listener {
                     String prefix = color.getMainColor() + "[Genie] " + color.getSecondaryColor();
                     if (!lamp.hasWishesLeft()) {
                         player.sendMessage(prefix + msg.getMessage(MessageType.OUT_OF_WISHES));
+                        try {
                         item.getItemMeta().setUnbreakable(false);
+                        }catch(NoSuchMethodError ex){
+                        	item.getItemMeta().spigot().setUnbreakable(false);
+                        }
                         return;
                     }
                     player.sendMessage(prefix + msg.getMessage(MessageType.SUMMON) + " " + msg.getMessage(MessageType.HELP_WISH));
